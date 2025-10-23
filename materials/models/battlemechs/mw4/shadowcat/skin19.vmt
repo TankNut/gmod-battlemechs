@@ -1,0 +1,7 @@
+VertexLitGeneric
+{
+	$basetexture "models\battlemechs\mw4\shadowcat\skin19"
+	
+	$halflambert 1
+	$nocull 1
+}

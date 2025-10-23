@@ -1,0 +1,7 @@
+VertexLitGeneric
+{
+	$basetexture "models\battlemechs\mw4\awesome\skin15"
+	
+	$halflambert 1
+	$nocull 1
+}
