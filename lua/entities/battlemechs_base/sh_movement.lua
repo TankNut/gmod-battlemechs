@@ -28,7 +28,7 @@ function ENT:GetGroundTrace()
 		start = pos,
 		endpos = pos - Vector(0, 0, 56756),
 		filter = self,
-		collisiongroup = COLLISION_GROUP_WEAPON,
+		collisiongroup = COLLISION_GROUP_WORLD,
 		mins = Vector(-10, -10, 0),
 		maxs = Vector(10, 10, 0)
 	})
