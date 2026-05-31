@@ -256,7 +256,7 @@ function ENT:OnRemove()
 
 	if CLIENT then
 		self:ClearParts()
-		self:DestroyHUD()
+		battlemechs:DestroyHUD(self)
 	end
 end
 
@@ -269,7 +269,7 @@ function ENT:OnReloaded()
 		self.Debug_HitboxCache = nil
 
 		self:InitParts()
-		self:DestroyHUD()
+		battlemechs:DestroyHUD(self)
 	end
 end
 

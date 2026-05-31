@@ -1,22 +1,15 @@
-function ENT:InitHUD()
-	self.ActiveHUD = battlemechs.HUDList.mw4
-	self.ActiveHUD:Init()
-end
-
-function ENT:DestroyHUD()
-	if self.ActiveHUD then
-		self.ActiveHUD:Destroy()
-		self.ActiveHUD = nil
-	end
-end
-
 function ENT:UpdateHUD()
 	local isDriving = self:GetDriver() == LocalPlayer()
+	local hud, mech = battlemechs:GetHUD()
 
-	if isDriving and not self.ActiveHUD then
-		self:InitHUD()
-	elseif not isDriving and self.ActiveHUD then
-		self:DestroyHUD()
+	if mech and mech != self then
+		return
+	end
+
+	if isDriving and not hud then
+		battlemechs:CreateHUD(self, "mw4")
+	elseif not isDriving and hud then
+		battlemechs:DestroyHUD()
 	end
 end
 

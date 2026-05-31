@@ -26,6 +26,34 @@ if SERVER then
 	return
 end
 
+function battlemechs:GetHUD()
+	return self.ActiveHUD, self.ActiveMech
+end
+
+function battlemechs:CreateHUD(mech, name)
+	if self.ActiveHUD then
+		self:DestroyHUD()
+	end
+
+	self.ActiveHUD = self.HUDList[name]
+	self.ActiveMech = mech
+
+	if self.ActiveHUD then
+		self.ActiveHUD:Init(mech)
+	end
+end
+
+function battlemechs:DestroyHUD(mech)
+	if not self.ActiveHUD or (mech and self.ActiveMech != mech) then
+		return
+	end
+
+	self.ActiveHUD:Destroy()
+
+	self.ActiveHUD = nil
+	self.ActiveMech = nil
+end
+
 battlemechs.HUDList = battlemechs.HUDList or {}
 
-include("hud/mw4/_hud.lua")
+include("hud/mw4/hud.lua")

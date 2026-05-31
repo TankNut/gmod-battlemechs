@@ -106,6 +106,7 @@ function ENT:DebugTurrets()
 
 	for _, bone in pairs(self.Bones) do
 		local turret = bone.Turret
+
 		if turret and not (turret.Slave or turret.Torso) then
 			local parent = self:GetBone(bone.Parent)
 			local forwardAngle

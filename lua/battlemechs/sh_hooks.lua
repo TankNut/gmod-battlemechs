@@ -52,7 +52,7 @@ else
 		end
 	end)
 
-	hook.Add("PlayerLeaveVehicle", "cmf", function(ply, vehicle)
+	hook.Add("PlayerLeaveVehicle", "battlemechs", function(ply, vehicle)
 		local mech = vehicle._battlemech
 
 		if IsValid(mech) then
