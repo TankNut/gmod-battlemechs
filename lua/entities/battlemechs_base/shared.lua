@@ -109,10 +109,11 @@ function ENT:Initialize()
 	self:InitHitboxes()
 
 	if CLIENT then
-		local radius = self.DrawRadius
+		local radius = self:GetMechRadius()
+		local bounds = Vector(radius, radius, radius)
 
 		self:InitParts()
-		self:SetRenderBounds(self.Hull.Mins, self.Hull.Maxs, Vector(radius, radius, radius))
+		self:SetRenderBounds(-bounds, bounds)
 
 		hook.Add("PreDrawHUD", self, self.PreDrawHUD)
 	else

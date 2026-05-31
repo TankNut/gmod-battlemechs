@@ -8,6 +8,10 @@ function ENT:GetMoveVelocity()
 	end
 end
 
+function ENT:GetMechRadius()
+	return math.max(self.GroundOffset, self:BoundingRadius())
+end
+
 function ENT:GetMoveStat(val)
 	local scale = math.Clamp(math.Remap(self:GetMoveVelocity():Length2D(), self.WalkSpeed, self.RunSpeed, 0, 1), 0, 1)
 
