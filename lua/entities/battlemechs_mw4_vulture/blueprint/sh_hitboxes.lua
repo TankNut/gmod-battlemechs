@@ -29,11 +29,11 @@ if SERVER then
 end
 
 function ENT:BuildDamageGroups()
-	self:AddDamageGroup("Torso", 10, {"Torso"})
+	self:AddDamageGroup("Torso", 10, {"Torso", "Chin", "ChinGun"})
 
 	self:AddDamageGroup("Left Weapon", 3, {"LeftWeapon"})
 	self:AddDamageGroup("Right Weapon", 3, {"RightWeapon"})
 
 	self:AddDamageGroup("Left Leg", 4, {"LeftHip", "LeftKnee", "LeftFoot"})
-	self:AddDamageGroup("Right Leg ", 4, {"RightHip", "RightKnee", "RightFoot"})
+	self:AddDamageGroup("Right Leg", 4, {"RightHip", "RightKnee", "RightFoot"})
 end
