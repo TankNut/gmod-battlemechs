@@ -62,4 +62,10 @@ else
 			ply:DrawShadow(true)
 		end
 	end)
+
+	hook.Add("PlayerShouldTakeDamage", "battlemechs", function(ply)
+		if IsValid(battlemechs:GetMech(ply)) then
+			return false
+		end
+	end)
 end
