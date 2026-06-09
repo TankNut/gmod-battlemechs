@@ -103,6 +103,10 @@ if CLIENT then
 	end
 else
 	function ENT:OnTakeDamage(dmg)
-		self:GetOwner():TakeMechDamage(self:GetHitboxIndex(), dmg)
+		if dmg:GetDamage() < 1 then
+			return
+		end
+
+		self:GetOwner():RegisterDamageEvent(self:GetHitboxIndex(), dmg)
 	end
 end

@@ -136,6 +136,9 @@ function ENT:InitPhysics()
 	if SERVER then
 		self:PhysicsInitBox(mins, maxs, "solidmetal")
 		self:SetSolid(SOLID_VPHYSICS)
+
+		self:SetMaxHealth(self.BaseHealth)
+		self:SetHealth(self.BaseHealth)
 	end
 end
 
@@ -157,6 +160,10 @@ end
 
 function ENT:Think()
 	self:PhysWake()
+
+	if SERVER then
+		self:ProcessDamageEvents()
+	end
 
 	self:UpdateBones()
 	self:UpdateLegs()
