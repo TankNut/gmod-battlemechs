@@ -21,14 +21,15 @@ function PANEL:Init()
 		local mech = HUD.Mech
 		local y = 10
 
-		y = addLine("Hull: 100%", y, Color(0, 255, 0))
-		y = addLine("", y, color_white)
-		y = addLine("Mobility: Crippled", y, Color(255, 0, 0))
-		y = addLine("Weapons: Damaged", y, Color(255, 255, 0))
+		local percentage = (mech:Health() / mech:GetMaxHealth()) * 100
+
+		y = addLine(string.format("Hull: %.0i%%", percentage), y, Color(0, 255, 0))
 		y = addLine("", y, color_white)
 
-		for k, v in ipairs(mech.DamageGroups) do
-			y = addLine(string.format("%s: 100%%", v.Name), y, Color(0, 255, 0))
+		for index, group in ipairs(mech.DamageGroups) do
+			local health = (mech["GetDamageGroup" .. index](self) / group.MaxHealth) * 100
+
+			y = addLine(string.format("%s: %.1i%%", group.Name, health), y, Color(0, 255, 0))
 		end
 	end
 
@@ -45,7 +46,7 @@ function PANEL:Init()
 
 		local mech = HUD.Mech
 
-		draw.DrawText(string.format("%i/%i", mech:GetMechHealth()), "DermaLarge", 10, 5, HSVToColor(HUD.Hue, 1, 1), TEXT_ALIGN_LEFT)
+		draw.DrawText(string.format("%i/%i", mech:Health(), mech:GetMaxHealth()), "DermaLarge", 10, 5, HSVToColor(HUD.Hue, 1, 1), TEXT_ALIGN_LEFT)
 	end
 end
 

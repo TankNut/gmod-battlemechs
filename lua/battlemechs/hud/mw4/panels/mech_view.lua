@@ -31,13 +31,15 @@ function PANEL:DrawMech(mech, w, h)
 		end
 
 		local health = 1
-		local hue = 120
 		local damageGroup = mech.DamageMap[part.Bone]
 
 		if damageGroup then
 			health = math.Clamp(mech["GetDamageGroup" .. damageGroup](mech) / mech.DamageGroups[damageGroup].MaxHealth, 0, 1)
-			hue = math.Remap(health, 1, 0, 120, 0)
+		else
+			health = math.Clamp(mech:Health() / mech:GetMaxHealth(), 0, 1)
 		end
+
+		local hue = math.Remap(health, 1, 0, 120, 0)
 
 		do
 			local sat = health > 0 and 1 or 0
