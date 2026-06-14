@@ -76,3 +76,15 @@ function ENT:CreateNetworkVars()
 	self:NetworkVar("Angle", "LeftWeaponAngle")
 	self:NetworkVar("Angle", "RightWeaponAngle")
 end
+
+function ENT:BuildModules()
+	self:AddModule("battlemechs_weapon", "", {
+		Bone = "LeftWeapon",
+		Key = IN_ATTACK
+	})
+
+	self:AddModule("battlemechs_weapon", "", {
+		Bone = "RightWeapon",
+		Key = IN_ATTACK
+	})
+end

@@ -40,6 +40,9 @@ else
 	end
 end
 
+function ENT:BuildModules()
+end
+
 function ENT:CanMove()
 	return self:HasDriver()
 end

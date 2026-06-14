@@ -74,6 +74,7 @@ include("sh_gait.lua")
 include("sh_helpers.lua")
 include("sh_hitboxes.lua")
 include("sh_ik.lua")
+include("sh_modules.lua")
 include("sh_movement.lua")
 include("sh_view.lua")
 
@@ -107,6 +108,7 @@ function ENT:Initialize()
 	self:InitBones()
 	self:InitLegs()
 	self:InitHitboxes()
+	self:InitModules()
 
 	if CLIENT then
 		local radius = self:GetMechRadius()
@@ -173,6 +175,8 @@ function ENT:Think()
 		self:UpdateThirdPerson()
 		self:UpdateHUD()
 	end
+
+	self:UpdateModules()
 
 	self:NextThink(CurTime())
 

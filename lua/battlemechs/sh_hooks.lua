@@ -14,6 +14,7 @@ end
 
 battlemechs:Hook("PlayerButtonDown")
 battlemechs:Hook("PlayerButtonUp")
+battlemechs:Hook("PlayerPostThink")
 
 if CLIENT then
 	function battlemechs:HookLocal(name)
