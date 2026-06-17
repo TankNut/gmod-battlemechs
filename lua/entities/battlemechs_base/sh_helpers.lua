@@ -63,8 +63,8 @@ function ENT:GetAimTrace()
 	return util.TraceHull({
 		start = pos,
 		endpos = pos + ang:Forward() * 56756,
-		mask = MASK_SOLID,
-		filter = self,
+		mask = MASK_SHOT,
+		filter = table.Add({self}, self.Hitboxes),
 		mins = Vector(-4, -4, -4),
 		maxs = Vector(4, 4, 4),
 	})
