@@ -79,12 +79,15 @@ end
 
 function ENT:BuildModules()
 	self:AddModule("battlemechs_weapon", "", {
-		Bone = "LeftWeapon",
-		Key = IN_ATTACK
-	})
-
-	self:AddModule("battlemechs_weapon", "", {
-		Bone = "RightWeapon",
-		Key = IN_ATTACK
+		ChainFire = true,
+		Mounts = {
+			{
+				Bone = "LeftWeapon",
+				Key = IN_ATTACK
+			}, {
+				Bone = "RightWeapon",
+				Key = IN_ATTACK
+			}
+		}
 	})
 end
