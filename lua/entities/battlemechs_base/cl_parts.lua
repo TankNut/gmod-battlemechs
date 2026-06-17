@@ -4,20 +4,27 @@ function ENT:InitParts()
 	end
 
 	self.Parts = {}
+	self:BuildModel()
+end
 
-	for _, v in ipairs(self.ModelData) do
-		self:AddPart(v)
-	end
+function ENT:AddModelPart(mdl, bone, data)
+	data = data or {}
+
+	data.Type = battlemechs.MODEL
+	data.Model = Model(mdl)
+	data.Bone = bone
+
+	data.Pos = data.Pos or Vector()
+	data.Ang = data.Ang or Angle()
+
+	self:AddPart(data)
+	self:CreatePartEntity(data)
 end
 
 function ENT:AddPart(data)
 	assert(self.Bones[data.Bone], string.format("Bone '%s' does not exist!", data.Bone))
 
 	table.insert(self.Parts, data)
-
-	if data.Type == battlemechs.MODEL then
-		self:CreatePartEntity(data)
-	end
 end
 
 function ENT:CreatePartEntity(part)
@@ -52,7 +59,7 @@ function ENT:DrawModelPart(part, flags)
 		ent = self:CreatePartEntity(part)
 	end
 
-	self:UpdateModelPart(ent, part)
+	self:UpdatePart(part)
 
 	local pos, ang = LocalToWorld(part.Pos, part.Ang, self.Bones[part.Bone].Pos, self.Bones[part.Bone].Ang)
 

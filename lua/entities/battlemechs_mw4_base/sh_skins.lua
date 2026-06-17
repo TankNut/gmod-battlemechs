@@ -88,8 +88,14 @@ function ENT:CanProperty(ply, prop)
 end
 
 if CLIENT then
-	function ENT:UpdateModelPart(ent, part)
-		if part.NoSkin then
+	function ENT:UpdatePart(part)
+		if part.Type != battlemechs.MODEL or part.NoSkin then
+			return
+		end
+
+		local ent = part.Entity
+
+		if not IsValid(ent) then
 			return
 		end
 

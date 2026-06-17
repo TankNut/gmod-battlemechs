@@ -30,7 +30,10 @@ function ENT:OnStepFinish(index, leg)
 end
 
 if CLIENT then
-	function ENT:UpdateModelPart(ent, part)
+	function ENT:BuildModel()
+	end
+
+	function ENT:UpdatePart(part)
 	end
 else
 	function ENT:BuildHitboxes()
