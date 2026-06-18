@@ -15,7 +15,6 @@ function BONE:Initialize(mech, name, data)
 	self.Hitboxes = {}
 
 	mech.Bones[name] = self
-	mech.HitboxBones[name] = {}
 end
 
 function BONE:Update()

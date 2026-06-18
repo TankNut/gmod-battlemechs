@@ -2,8 +2,6 @@ AddCSLuaFile()
 
 function ENT:InitBones()
 	self.Bones = {}
-	self.HitboxBones = {}
-
 	self.LastBoneThink = CurTime()
 
 	self:AddBone("Root", {
