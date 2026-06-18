@@ -48,7 +48,7 @@ function PANEL:DrawMech(mech, w, h)
 			render.ModelMaterialOverride(base)
 			render.SetColorModulation(HSVToColor(hue, sat, val):ToVector():Unpack())
 
-			part.Entity:DrawModel(STUDIO_RENDER)
+			mech:DrawModelPart(part, STUDIO_RENDER)
 		end
 
 		do
@@ -58,7 +58,7 @@ function PANEL:DrawMech(mech, w, h)
 			render.ModelMaterialOverride(wireframe)
 			render.SetColorModulation(HSVToColor(hue, sat, val):ToVector():Unpack())
 
-			part.Entity:DrawModel(STUDIO_RENDER)
+			mech:DrawModelPart(part, STUDIO_RENDER)
 		end
 	end
 
