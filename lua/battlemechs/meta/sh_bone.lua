@@ -29,6 +29,7 @@ function BONE:Update()
 	end
 
 	self:UpdateHitboxes()
+	self.Updated = true
 end
 
 function BONE:UpdateHitboxes()
