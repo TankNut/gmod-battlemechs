@@ -30,6 +30,10 @@ end
 function ENT:CreatePartEntity(part)
 	local ent = ClientsideModel(part.Model, part.RenderGroup)
 
+	if not IsValid(ent) or ent:GetModel() == "models/error.mdl" then
+		return
+	end
+
 	ent:SetSkin(part.Skin or 0)
 	ent:SetNoDraw(true)
 
@@ -57,6 +61,10 @@ function ENT:DrawModelPart(part, flags)
 
 	if not IsValid(ent) then
 		ent = self:CreatePartEntity(part)
+
+		if not IsValid(ent) then
+			return
+		end
 	end
 
 	self:UpdatePart(part)
