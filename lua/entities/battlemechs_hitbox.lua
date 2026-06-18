@@ -14,7 +14,7 @@ function ENT:Initialize()
 	local mech = self:GetOwner()
 
 	table.insert(mech.Hitboxes, self)
-	table.insert(mech:GetBone(self:GetHitboxIndex()).Hitboxes, self)
+	table.insert(mech.Bones[self:GetHitboxIndex()].Hitboxes, self)
 
 	local mins, maxs = self:GetHitboxMins(), self:GetHitboxMaxs()
 
@@ -40,7 +40,7 @@ function ENT:Initialize()
 end
 
 function ENT:SetupDataTables()
-	self:NetworkVar("String", "HitboxIndex")
+	self:NetworkVar("Int", "HitboxIndex")
 
 	self:NetworkVar("Vector", "HitboxMins")
 	self:NetworkVar("Vector", "HitboxMaxs")

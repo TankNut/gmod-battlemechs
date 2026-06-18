@@ -22,7 +22,7 @@ function ENT:AddModelPart(mdl, bone, data)
 end
 
 function ENT:AddPart(data)
-	assert(self.Bones[data.Bone], string.format("Bone '%s' does not exist!", data.Bone))
+	assert(self:GetBone(data.Bone), string.format("Bone '%s' does not exist!", data.Bone))
 
 	table.insert(self.Parts, data)
 end
@@ -69,7 +69,8 @@ function ENT:DrawModelPart(part, flags)
 
 	self:UpdatePart(part)
 
-	local pos, ang = LocalToWorld(part.Pos, part.Ang, self.Bones[part.Bone].Pos, self.Bones[part.Bone].Ang)
+	local bone = self:GetBone(part.Bone)
+	local pos, ang = LocalToWorld(part.Pos, part.Ang, bone.Pos, bone.Ang)
 
 	-- NaN check
 	if pos.x != pos.x then

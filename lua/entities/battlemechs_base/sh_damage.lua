@@ -71,9 +71,11 @@ if SERVER then
 		end
 	end
 
-	function ENT:RegisterDamageEvent(bone, dmg)
+	function ENT:RegisterDamageEvent(index, dmg)
+		local bone = self.Bones[index]
+
 		-- This should be a thing, and just transmit directly to the mech itself
-		local group = assert(self:GetBone(bone).DamageGroup, "Bone '" .. bone .. "' took damage but is not tied to a damage group!")
+		local group = assert(bone.DamageGroup, "Bone '" .. bone.Name .. "' took damage but is not tied to a damage group!")
 		local cache = self.DamageCache
 
 		local uid = string.format("%s-%p-%p-%p", engine.TickCount(), dmg:GetWeapon(), dmg:GetInflictor(), dmg:GetAttacker())

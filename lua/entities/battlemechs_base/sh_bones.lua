@@ -2,6 +2,8 @@ AddCSLuaFile()
 
 function ENT:InitBones()
 	self.Bones = {}
+	self.BoneMap = {}
+
 	self.LastBoneThink = CurTime()
 
 	self:AddBone("Root", {
@@ -9,10 +11,14 @@ function ENT:InitBones()
 	})
 
 	self:BuildBones()
+
+	for _, bone in ipairs(self.Bones) do
+		bone.Parent = self:GetBone(bone.Parent)
+	end
 end
 
 function ENT:AddBone(name, data)
-	assert(not self.Bones[name], string.format("A bone with the name '%s' already exists!", name))
+	assert(not self.BoneMap[name], string.format("A bone with the name '%s' already exists!", name))
 
 	battlemechs:Bone(self, name, data or {})
 end
@@ -28,9 +34,11 @@ function ENT:UpdateRootBone(bone)
 end
 
 function ENT:GetBone(name)
-	if name then
-		return self.Bones[name]
+	if not name then
+		return
 	end
+
+	return self.BoneMap[name]
 end
 
 local function approachAngle(from, to, delta, range)
@@ -70,14 +78,13 @@ function ENT:GetTurretAngle(bone, config, ang, forwardAngle)
 end
 
 function ENT:UpdateTurret(bone)
-	local parent = self:GetBone(bone.Parent)
 	local config = bone.Turret
 
 	local ang = self["Get" .. config.NetworkVar](self)
 	local forwardAngle
 
-	if parent then
-		forwardAngle = parent.Ang
+	if bone.Parent then
+		forwardAngle = bone.Parent.Ang
 	else
 		forwardAngle = self:GetAngles()
 	end
@@ -147,11 +154,11 @@ function ENT:UpdateBones()
 	self.BoneDelta = CurTime() - self.LastBoneThink
 	self.BoneTrace = self:GetAimTrace()
 
-	for name, bone in pairs(self.Bones) do
+	for _, bone in ipairs(self.Bones) do
 		bone.Updated = nil
 	end
 
-	for name, bone in pairs(self.Bones) do
+	for _, bone in ipairs(self.Bones) do
 		bone:Update()
 	end
 

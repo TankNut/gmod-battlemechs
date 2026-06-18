@@ -33,12 +33,12 @@ function ENT:DebugPhysics()
 end
 
 function ENT:DebugBones()
-	for name, bone in pairs(self.Bones) do
+	for _, bone in pairs(self.Bones) do
 		render.DrawLine(bone.Pos, bone.Pos + bone.Ang:Forward() * 10, forward)
 		render.DrawLine(bone.Pos, bone.Pos + bone.Ang:Right() * 10, right)
 		render.DrawLine(bone.Pos, bone.Pos + bone.Ang:Up() * 10, up)
 
-		battlemechs:DrawWorldText(bone.Pos, name, true)
+		battlemechs:DrawWorldText(bone.Pos, bone.Name, true)
 	end
 end
 
@@ -108,7 +108,7 @@ function ENT:DebugTurrets()
 		local turret = bone.Turret
 
 		if turret and not (turret.Slave or turret.Torso) then
-			local parent = self:GetBone(bone.Parent)
+			local parent = bone.Parent
 			local forwardAngle
 
 			if parent then

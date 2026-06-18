@@ -15,7 +15,7 @@ function ENT:InitHitboxes()
 end
 
 if SERVER then
-	function ENT:AddHitbox(bone, pos, ang, size)
+	function ENT:AddHitbox(name, pos, ang, size)
 		local ent = ents.Create("battlemechs_hitbox")
 		local mins = Vector(0, -size.y * 0.5, -size.z * 0.5)
 		local maxs = Vector(size.x, size.y * 0.5, size.z * 0.5)
@@ -25,7 +25,7 @@ if SERVER then
 
 		ent:SetOwner(self)
 
-		ent:SetHitboxIndex(bone)
+		ent:SetHitboxIndex(self:GetBone(name).Index)
 
 		ent:SetHitboxPos(pos)
 		ent:SetHitboxAng(ang)

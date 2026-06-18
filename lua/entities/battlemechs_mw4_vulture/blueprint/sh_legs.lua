@@ -6,7 +6,7 @@ function ENT:BuildLegs()
 	self:AddLeg({
 		Timing = 0,
 
-		RootBone = self.Bones.Root,
+		RootBone = self:GetBone("Root"),
 		Rotation = Angle(0, 0, 0),
 
 		Origin = Vector(0, spread, 0),
@@ -16,9 +16,9 @@ function ENT:BuildLegs()
 		Solver = self.IK_2Seg_Humanoid,
 		Chicken = true,
 
-		Hip = self.Bones.LeftHip,
-		Knee = self.Bones.LeftKnee,
-		Foot = self.Bones.LeftFoot,
+		Hip = self:GetBone("LeftHip"),
+		Knee = self:GetBone("LeftKnee"),
+		Foot = self:GetBone("LeftFoot"),
 
 		LengthA = self.UpperLength,
 		LengthB = self.LowerLength,
@@ -28,7 +28,7 @@ function ENT:BuildLegs()
 	self:AddLeg({
 		Timing = 0.5,
 
-		RootBone = self.Bones.Root,
+		RootBone = self:GetBone("Root"),
 		Rotation = Angle(0, 0, 0),
 
 		Origin = Vector(0, -spread, 0),
@@ -38,9 +38,9 @@ function ENT:BuildLegs()
 		Solver = self.IK_2Seg_Humanoid,
 		Chicken = true,
 
-		Hip = self.Bones.RightHip,
-		Knee = self.Bones.RightKnee,
-		Foot = self.Bones.RightFoot,
+		Hip = self:GetBone("RightHip"),
+		Knee = self:GetBone("RightKnee"),
+		Foot = self:GetBone("RightFoot"),
 
 		LengthA = self.UpperLength,
 		LengthB = self.LowerLength,

@@ -8,13 +8,15 @@ function BONE:Initialize(mech, name, data)
 		self[k] = v
 	end
 
+	self.Index = table.insert(mech.Bones, self)
+
 	self.Pos = Vector()
 	self.Ang = Angle()
 
 	self.DamageGroup = mech.DamageMap[self.Name]
 	self.Hitboxes = {}
 
-	mech.Bones[name] = self
+	mech.BoneMap[self.Name] = self
 end
 
 function BONE:Update()
@@ -22,18 +24,16 @@ function BONE:Update()
 		return
 	end
 
-	local parent = self.Mech:GetBone(self.Parent)
-
-	if parent then
-		parent:Update()
+	if self.Parent then
+		self.Parent:Update()
 
 		if self.Offset then
 			local offset = self.Offset
 
-			self.Pos, self.Ang = LocalToWorld(offset.Pos or vector_origin, offset.Ang or angle_zero, parent.Pos, parent.Ang)
+			self.Pos, self.Ang = LocalToWorld(offset.Pos or vector_origin, offset.Ang or angle_zero, self.Parent.Pos, self.Parent.Ang)
 		else
-			self.Pos = parent.Pos
-			self.Ang = parent.Ang
+			self.Pos = self.Parent.Pos
+			self.Ang = self.Parent.Ang
 		end
 	end
 
