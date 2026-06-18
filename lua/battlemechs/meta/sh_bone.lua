@@ -1,12 +1,9 @@
 local BONE = {}
 
-function BONE:Initialize(mech, name, data)
+function BONE:Initialize(mech, name, parent)
 	self.Mech = mech
 	self.Name = name
-
-	for k, v in pairs(data) do
-		self[k] = v
-	end
+	self.Parent = parent
 
 	self.Index = table.insert(mech.Bones, self)
 
@@ -15,8 +12,28 @@ function BONE:Initialize(mech, name, data)
 
 	self.DamageGroup = mech.DamageMap[self.Name]
 	self.Hitboxes = {}
+	self.Callbacks = {}
 
 	mech.BoneMap[self.Name] = self
+end
+
+function BONE:AddBone(name)
+	return self.Mech:AddBone(name, self.Name)
+end
+
+function BONE:AddCallback(callback)
+	table.insert(self.Callbacks, callback)
+end
+
+function BONE:MakeTurret(data)
+	self.Turret = data
+end
+
+function BONE:SetOffset(pos, ang)
+	self.Offset = {
+		Pos = pos,
+		Ang = ang
+	}
 end
 
 function BONE:LocalToWorld(pos, ang)
@@ -45,8 +62,8 @@ function BONE:Update()
 		self.Mech:UpdateTurret(self)
 	end
 
-	if self.Callback then
-		self.Callback(self.Mech, self)
+	for _, callback in ipairs(self.Callbacks) do
+		callback(self.Mech, self)
 	end
 
 	self:UpdateHitboxes()

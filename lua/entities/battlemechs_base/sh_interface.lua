@@ -3,7 +3,7 @@ AddCSLuaFile()
 function ENT:CreateNetworkVars()
 end
 
-function ENT:BuildBones()
+function ENT:BuildBones(root)
 end
 
 function ENT:UpdateRootBone(bone)

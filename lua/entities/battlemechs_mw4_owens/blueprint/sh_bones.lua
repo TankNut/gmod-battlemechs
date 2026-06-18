@@ -1,6 +1,6 @@
 AddCSLuaFile()
 
-function ENT:BuildBones()
+function ENT:BuildBones(root)
 	-- Body
 	self:AddBone("Torso", {
 		Parent = "Root",

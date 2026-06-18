@@ -6,21 +6,20 @@ function ENT:InitBones()
 
 	self.LastBoneThink = CurTime()
 
-	self:AddBone("Root", {
-		Callback = self.UpdateRootBone
-	})
+	local root = self:AddBone("Root")
+	root:AddCallback(self.UpdateRootBone)
 
-	self:BuildBones()
+	self:BuildBones(root)
 
 	for _, bone in ipairs(self.Bones) do
 		bone.Parent = self:GetBone(bone.Parent)
 	end
 end
 
-function ENT:AddBone(name, data)
+function ENT:AddBone(name, parent)
 	assert(not self.BoneMap[name], string.format("A bone with the name '%s' already exists!", name))
 
-	battlemechs:Bone(self, name, data or {})
+	return battlemechs:Bone(self, name, parent)
 end
 
 function ENT:UpdateRootBone(bone)
