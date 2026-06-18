@@ -19,6 +19,10 @@ function BONE:Initialize(mech, name, data)
 	mech.BoneMap[self.Name] = self
 end
 
+function BONE:LocalToWorld(pos, ang)
+	return LocalToWorld(pos or vector_origin, ang or angle_zero, self.Pos, self.Ang)
+end
+
 function BONE:Update()
 	if self.Updated then
 		return

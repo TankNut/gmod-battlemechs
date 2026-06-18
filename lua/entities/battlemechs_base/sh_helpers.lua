@@ -24,12 +24,6 @@ function ENT:GetMoveStat(val)
 	return val
 end
 
-function ENT:BoneToWorld(name, pos, ang)
-	local bone = self:GetBone(name)
-
-	return LocalToWorld(pos or vector_origin, ang or angle_zero, bone.Pos, bone.Ang)
-end
-
 function ENT:GetViewOrigin()
 	local ply = self:GetDriver()
 	local ang = IsValid(ply) and ply:LocalEyeAngles() or self:GetAngles()
@@ -53,7 +47,11 @@ function ENT:GetViewOrigin()
 	else
 		local config = self.FirstPersonSettings
 
-		return config.Bone and self:BoneToWorld(config.Bone, config.Pos) or self:LocalToWorld(config.Pos), ang
+		if config.Bone then
+			return self:GetBone(config.Bone):LocalToWorld(config.Pos), ang
+		else
+			return self:LocalToWorld(config.Pos, ang)
+		end
 	end
 end
 
