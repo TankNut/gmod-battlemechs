@@ -33,7 +33,7 @@ function ENT:DebugPhysics()
 end
 
 function ENT:DebugBones()
-	for _, bone in pairs(self.Bones) do
+	for _, bone in ipairs(self.Bones) do
 		render.DrawLine(bone.Pos, bone.Pos + bone.Ang:Forward() * 10, forward)
 		render.DrawLine(bone.Pos, bone.Pos + bone.Ang:Right() * 10, right)
 		render.DrawLine(bone.Pos, bone.Pos + bone.Ang:Up() * 10, up)
@@ -49,15 +49,21 @@ function ENT:DebugHitboxes()
 		local count = table.Count(self.Bones)
 		local increment = 360 / count
 
-		for i = 0, count - 1 do
-			table.insert(self.Debug_HitboxCache, HSVToColor(i * increment, 0.5, 1))
+		for _, bone in ipairs(self.Bones) do
+			if #bone.Hitboxes > 0 then
+				table.insert(self.Debug_HitboxCache, HSVToColor(#self.Debug_HitboxCache * increment, 0.5, 1))
+			end
 		end
 	end
 
 	local i = 1
 
-	for _, bone in pairs(self.Bones) do
+	for _, bone in ipairs(self.Bones) do
 		local col = self.Debug_HitboxCache[i]
+
+		if #bone.Hitboxes == 0 then
+			continue
+		end
 
 		for _, hitbox in ipairs(bone.Hitboxes) do
 			drawBox(hitbox:GetPos(), hitbox:GetAngles(), hitbox:GetHitboxMins(), hitbox:GetHitboxMaxs(), col)
