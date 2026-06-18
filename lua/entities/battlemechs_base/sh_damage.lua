@@ -79,7 +79,7 @@ if SERVER then
 	end
 
 	function ENT:RegisterDamageEvent(bone, dmg)
-		local index = assert(self:GetBoneDamageGroup(bone), "Bone '" .. bone .. "' took damage but is not tied to a damage group!")
+		local group = assert(self:GetBone(bone).DamageGroup, "Bone '" .. bone .. "' took damage but is not tied to a damage group!")
 		local cache = self.DamageCache
 
 		local uid = string.format("%s-%p-%p-%p", engine.TickCount(), dmg:GetWeapon(), dmg:GetInflictor(), dmg:GetAttacker())
@@ -93,7 +93,7 @@ if SERVER then
 		end
 
 		table.insert(cache[uid], {
-			Index = index,
+			Index = group.Index,
 			Damage = dmg:GetDamage(),
 			Type = dmg:GetDamageType()
 		})
