@@ -1,5 +1,23 @@
 local BONE = {}
 
+function BONE:Initialize(mech, name, data)
+	self.Mech = mech
+	self.Name = name
+
+	for k, v in pairs(data) do
+		self[k] = v
+	end
+
+	self.Pos = Vector()
+	self.Ang = Angle()
+
+	self.DamageGroup = mech.DamageMap[self.Name]
+	self.Hitboxes = {}
+
+	mech.Bones[name] = self
+	mech.HitboxBones[name] = {}
+end
+
 function BONE:Update()
 	if self.Updated then
 		return
@@ -46,12 +64,9 @@ function BONE:UpdateHitboxes()
 	end
 end
 
-battlemechs.Bone = setmetatable(BONE, {__call = function(self, _, mech, data)
-	local instance = setmetatable(data, {__index = self})
-
-	instance.Mech = mech
-	instance.DamageGroup = mech.DamageMap[instance.Name]
-	instance.Hitboxes = {}
+battlemechs.Bone = setmetatable(BONE, {__call = function(self, _, ...)
+	local instance = setmetatable({}, {__index = self})
+	instance:Initialize(...)
 
 	return instance
 end})

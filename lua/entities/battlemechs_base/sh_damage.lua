@@ -22,13 +22,6 @@ function ENT:AddDamageGroup(name, health, bones)
 	battlemechs:DamageGroup(self, name, health, bones)
 end
 
-function ENT:GetDamageGroup()
-end
-
-function ENT:GetBoneDamageGroup(bone)
-	return self.DamageMap[bone]
-end
-
 if SERVER then
 	function ENT:OnTakeDamage(dmg)
 		return 0
@@ -79,6 +72,7 @@ if SERVER then
 	end
 
 	function ENT:RegisterDamageEvent(bone, dmg)
+		-- This should be a thing, and just transmit directly to the mech itself
 		local group = assert(self:GetBone(bone).DamageGroup, "Bone '" .. bone .. "' took damage but is not tied to a damage group!")
 		local cache = self.DamageCache
 

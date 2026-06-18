@@ -16,13 +16,7 @@ end
 function ENT:AddBone(name, data)
 	assert(not self.Bones[name], string.format("A bone with the name '%s' already exists!", name))
 
-	data = data or {}
-	data.Name = name
-	data.Pos = Vector()
-	data.Ang = Angle()
-
-	self.Bones[name] = battlemechs:Bone(self, data)
-	self.HitboxBones[name] = {}
+	battlemechs:Bone(self, name, data or {})
 end
 
 function ENT:UpdateRootBone(bone)

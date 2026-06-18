@@ -169,7 +169,6 @@ function ENT:Think()
 
 	self:UpdateBones()
 	self:UpdateLegs()
-	self:UpdateHitboxes()
 
 	if CLIENT then
 		self:UpdateThirdPerson()

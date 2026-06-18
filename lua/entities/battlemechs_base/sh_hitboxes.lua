@@ -14,25 +14,6 @@ function ENT:InitHitboxes()
 	end
 end
 
-function ENT:UpdateHitboxes()
-	for bone, group in pairs(self.HitboxBones) do
-		local bonePos = self.Bones[bone].Pos
-		local boneAng = self.Bones[bone].Ang
-
-		for _, hitbox in ipairs(group) do
-			local pos, ang = LocalToWorld(hitbox:GetHitboxPos(), hitbox:GetHitboxAng(), bonePos, boneAng)
-
-			-- NaN check
-			if pos.x != pos.x then
-				continue
-			end
-
-			hitbox:SetPos(pos)
-			hitbox:SetAngles(ang)
-		end
-	end
-end
-
 if SERVER then
 	function ENT:AddHitbox(bone, pos, ang, size)
 		local ent = ents.Create("battlemechs_hitbox")
