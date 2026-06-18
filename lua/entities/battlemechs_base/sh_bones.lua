@@ -13,6 +13,18 @@ function ENT:InitBones()
 	self:BuildBones()
 end
 
+function ENT:AddBone(name, data)
+	assert(not self.Bones[name], string.format("A bone with the name '%s' already exists!", name))
+
+	data = data or {}
+	data.Name = name
+	data.Pos = Vector()
+	data.Ang = Angle()
+
+	self.Bones[name] = battlemechs:Bone(self, data)
+	self.HitboxBones[name] = {}
+end
+
 function ENT:UpdateRootBone(bone)
 	bone.Ang = self:GetAngles()
 
@@ -27,39 +39,6 @@ function ENT:GetBone(name)
 	if name then
 		return self.Bones[name]
 	end
-end
-
-local updatedBones
-
-function ENT:UpdateBone(bone)
-	if updatedBones[bone.Name] then
-		return
-	end
-
-	local parent = self:GetBone(bone.Parent)
-
-	if parent then
-		self:UpdateBone(parent)
-
-		if bone.Offset then
-			local offset = bone.Offset
-
-			bone.Pos, bone.Ang = LocalToWorld(offset.Pos or vector_origin, offset.Ang or angle_zero, parent.Pos, parent.Ang)
-		else
-			bone.Pos = parent.Pos
-			bone.Ang = parent.Ang
-		end
-	end
-
-	if bone.Turret then
-		self:UpdateTurret(bone)
-	end
-
-	if bone.Callback then
-		bone.Callback(self, bone)
-	end
-
-	updatedBones[bone.Name] = true
 end
 
 local function approachAngle(from, to, delta, range)
@@ -176,23 +155,13 @@ function ENT:UpdateBones()
 	self.BoneDelta = CurTime() - self.LastBoneThink
 	self.BoneTrace = self:GetAimTrace()
 
-	updatedBones = {}
+	for name, bone in pairs(self.Bones) do
+		bone.Updated = nil
+	end
 
-	for _, bone in pairs(self.Bones) do
-		self:UpdateBone(bone)
+	for name, bone in pairs(self.Bones) do
+		bone:Update()
 	end
 
 	self.LastBoneThink = CurTime()
-end
-
-function ENT:AddBone(name, data)
-	assert(not self.Bones[name], string.format("A bone with the name '%s' already exists!", name))
-
-	data = data or {}
-	data.Name = name
-	data.Pos = Vector()
-	data.Ang = Angle()
-
-	self.Bones[name] = data
-	self.HitboxBones[name] = {}
 end

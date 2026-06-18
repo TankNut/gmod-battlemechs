@@ -1,4 +1,3 @@
-
 function ENT:BuildModel()
 	-- Hip
 	self:AddModelPart("models/battlemechs/mw4/vulture/vulture_hip.mdl", "Root")

@@ -12,25 +12,21 @@ function ENT:InitDamageGroups()
 		group.Fraction = group.MaxHealth / self.DamagePool
 		group.MaxHealth = math.ceil(group.Fraction * self.BaseHealth)
 
-		self["SetDamageGroup" .. index](self, group.MaxHealth)
+		group:Set(group.MaxHealth)
 	end
 
 	self.DamageCache = {}
 end
 
 function ENT:AddDamageGroup(name, health, bones)
-	local index = table.insert(self.DamageGroups, {
-		Name = name,
-		MaxHealth = health
-	})
+	battlemechs:DamageGroup(self, name, health, bones)
+end
 
-	self.DamagePool = self.DamagePool + health
+function ENT:GetDamageGroup()
+end
 
-	self:NetworkVar("Int", "DamageGroup" .. index)
-
-	for _, bone in ipairs(bones) do
-		self.DamageMap[bone] = index
-	end
+function ENT:GetBoneDamageGroup(bone)
+	return self.DamageMap[bone]
 end
 
 if SERVER then
@@ -56,18 +52,19 @@ if SERVER then
 	local debugConvar = CreateConVar("battlemechs_debug_damage", 0, bit.bor(FCVAR_ARCHIVE, FCVAR_REPLICATED))
 
 	function ENT:TakeMechDamage(index, dmg)
-		local health = self["GetDamageGroup" .. index](self)
+		local group = self.DamageGroups[index]
 		local damage = dmg:GetDamage()
+		local health = group:Get()
 
 		local hullDamage = self:GetHullDamage(index, health, damage)
 		local remaining = math.max(health - damage, 0)
 
 		if remaining != health then
-			self["SetDamageGroup" .. index](self, remaining)
+			group:Set(remaining)
 		end
 
 		if debugConvar:GetBool() then
-			print(string.format("\t%s: %s -> %s (%s to hull)", self.DamageGroups[index].Name, health, remaining, hullDamage))
+			print(string.format("\t%s: %s -> %s (%s to hull)", group.Name, health, remaining, hullDamage))
 		end
 
 		if hullDamage > 0 then
@@ -82,7 +79,7 @@ if SERVER then
 	end
 
 	function ENT:RegisterDamageEvent(bone, dmg)
-		local index = assert(self.DamageMap[bone], "Bone '" .. bone .. "' is not tied to a damage group!")
+		local index = assert(self:GetBoneDamageGroup(bone), "Bone '" .. bone .. "' took damage but is not tied to a damage group!")
 		local cache = self.DamageCache
 
 		local uid = string.format("%s-%p-%p-%p", engine.TickCount(), dmg:GetWeapon(), dmg:GetInflictor(), dmg:GetAttacker())

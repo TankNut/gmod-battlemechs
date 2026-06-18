@@ -34,7 +34,7 @@ function PANEL:DrawMech(mech, w, h)
 		local damageGroup = mech.DamageMap[part.Bone]
 
 		if damageGroup then
-			health = math.Clamp(mech["GetDamageGroup" .. damageGroup](mech) / mech.DamageGroups[damageGroup].MaxHealth, 0, 1)
+			health = math.Clamp(damageGroup:Get() / damageGroup.MaxHealth, 0, 1)
 		else
 			health = math.Clamp(mech:Health() / mech:GetMaxHealth(), 0, 1)
 		end
@@ -48,7 +48,7 @@ function PANEL:DrawMech(mech, w, h)
 			render.ModelMaterialOverride(base)
 			render.SetColorModulation(HSVToColor(hue, sat, val):ToVector():Unpack())
 
-			mech:DrawModelPart(part)
+			part.Entity:DrawModel(STUDIO_RENDER)
 		end
 
 		do
@@ -58,7 +58,7 @@ function PANEL:DrawMech(mech, w, h)
 			render.ModelMaterialOverride(wireframe)
 			render.SetColorModulation(HSVToColor(hue, sat, val):ToVector():Unpack())
 
-			mech:DrawModelPart(part)
+			part.Entity:DrawModel(STUDIO_RENDER)
 		end
 	end
 

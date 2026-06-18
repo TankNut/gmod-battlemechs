@@ -14,6 +14,9 @@ include("sh_convars.lua")
 include("sh_hooks.lua")
 include("sh_hud.lua")
 
+include("meta/sh_bone.lua")
+include("meta/sh_damage_group.lua")
+
 function battlemechs:GetMech(ply)
 	return ply:GetNWEntity("battlemechs.mech")
 end

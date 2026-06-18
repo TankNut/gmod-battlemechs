@@ -27,7 +27,7 @@ function PANEL:Init()
 		y = addLine("", y, color_white)
 
 		for index, group in ipairs(mech.DamageGroups) do
-			local health = (mech["GetDamageGroup" .. index](self) / group.MaxHealth) * 100
+			local health = (group:Get() / group.MaxHealth) * 100
 
 			y = addLine(string.format("%s: %.1i%%", group.Name, health), y, Color(0, 255, 0))
 		end
