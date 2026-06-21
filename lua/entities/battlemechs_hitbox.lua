@@ -84,6 +84,18 @@ function ENT:OnRemove()
 	if self.PhysCollide then
 		self.PhysCollide:Destroy()
 	end
+
+	local mech = self:GetOwner()
+
+	if mech:IsValid() then
+		for index, hitbox in ipairs(mech.Hitboxes) do
+			if hitbox == self then
+				table.remove(mech.Hitboxes, index)
+
+				break
+			end
+		end
+	end
 end
 
 if CLIENT then
