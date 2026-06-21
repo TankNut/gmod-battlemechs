@@ -43,7 +43,6 @@ function ENT:BuildBones(root)
 		turret:SetRate(200)
 
 		turret:LockPitch(true)
-		turret:SetAlwaysActive(true)
 	end)
 
 	-- Chin gun

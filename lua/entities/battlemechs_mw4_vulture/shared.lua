@@ -62,6 +62,7 @@ ENT.FootOffset = 32
 include("blueprint/sh_bones.lua")
 include("blueprint/sh_hitboxes.lua")
 include("blueprint/sh_legs.lua")
+include("blueprint/sh_modules.lua")
 
 AddCSLuaFile("blueprint/cl_model.lua")
 
@@ -75,21 +76,4 @@ function ENT:CreateNetworkVars()
 
 	self:NetworkVar("Angle", "LeftWeaponAngle")
 	self:NetworkVar("Angle", "RightWeaponAngle")
-end
-
-function ENT:BuildModules()
-	self:AddModule("battlemechs_weapon", "", {
-		ChainFire = true,
-		Mounts = {
-			{
-				Bone = "ChinGun",
-				Offset = Vector(27, 18.5),
-				Key = IN_ATTACK2
-			}, {
-				Bone = "ChinGun",
-				Offset = Vector(27, -19.5),
-				Key = IN_ATTACK2
-			}
-		}
-	})
 end
