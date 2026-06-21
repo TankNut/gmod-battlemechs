@@ -25,8 +25,10 @@ function BONE:AddCallback(callback)
 	table.insert(self.Callbacks, callback)
 end
 
-function BONE:MakeTurret(data)
-	self.Turret = data
+function BONE:MakeTurret(var, callback, noDebug)
+	self.Turret = battlemechs:Turret(self, var, noDebug)
+
+	callback(self.Turret)
 end
 
 function BONE:SetOffset(pos, ang)
@@ -59,7 +61,7 @@ function BONE:Update()
 	end
 
 	if self.Turret then
-		self.Mech:UpdateTurret(self)
+		self.Turret:Update()
 	end
 
 	for _, callback in ipairs(self.Callbacks) do

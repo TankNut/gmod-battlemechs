@@ -16,6 +16,7 @@ include("sh_hud.lua")
 
 include("meta/sh_bone.lua")
 include("meta/sh_damage_group.lua")
+include("meta/sh_turret.lua")
 
 function battlemechs:GetMech(ply)
 	return ply:GetNWEntity("battlemechs.mech")

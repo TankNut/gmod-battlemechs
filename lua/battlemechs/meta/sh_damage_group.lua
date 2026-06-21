@@ -24,8 +24,8 @@ function GROUP:GetFraction()
 	return self:Get() / self.MaxHealth
 end
 
-function GROUP:Set(value)
-	self.Mech["SetDamageGroup" .. self.Index](self.Mech, value)
+function GROUP:Set(val)
+	self.Mech["SetDamageGroup" .. self.Index](self.Mech, val)
 end
 
 function GROUP:IsBroken()

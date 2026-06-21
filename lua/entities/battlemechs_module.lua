@@ -28,6 +28,9 @@ end
 function ENT:DriverThink(ply)
 end
 
+function ENT:OnRemove()
+end
+
 if CLIENT then
 	function ENT:DrawDebug()
 	end

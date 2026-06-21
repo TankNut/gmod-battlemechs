@@ -4,51 +4,56 @@ function ENT:BuildBones(root)
 	-- Body
 	local torso = root:AddBone("Torso")
 	torso:SetOffset(Vector(0, 0, 13))
-	torso:MakeTurret({
-		NetworkVar = "TorsoAngle",
-		Rate = 108,
 
-		NoPitch = true,
-		Torso = true
-	})
+	torso:MakeTurret("TorsoAngle", function(turret)
+		turret:SetRate(108)
+		turret:LockPitch(true)
+	end, true)
 
+	-- Left weapon
 	local leftWeapon = torso:AddBone("LeftWeapon")
 	leftWeapon:SetOffset(Vector(-23, 69, 22))
-	leftWeapon:MakeTurret({
-		NetworkVar = "LeftWeaponAngle",
-		Pitch = {-90, 90},
-		Yaw = {-15, 30},
-		Rate = 108,
-	})
 
+	leftWeapon:MakeTurret("LeftWeaponAngle", function(turret)
+		turret:SetPitch(-90, 90)
+		turret:SetYaw(-15, 30)
+
+		turret:SetRate(108)
+	end)
+
+	-- Right weapon
 	local rightWeapon = torso:AddBone("RightWeapon")
 	rightWeapon:SetOffset(Vector(-23, -69, 22))
-	rightWeapon:MakeTurret({
-		NetworkVar = "RightWeaponAngle",
-		Pitch = {-90, 90},
-		Yaw = {-30, 15},
-		Rate = 108
-	})
 
+	rightWeapon:MakeTurret("RightWeaponAngle", function(turret)
+		turret:SetPitch(-90, 90)
+		turret:SetYaw(-30, 15)
+
+		turret:SetRate(108)
+	end)
+
+	-- Chin
 	local chin = torso:AddBone("Chin")
 	chin:SetOffset(Vector(70, 0, 2))
-	chin:MakeTurret({
-		NetworkVar = "ChinAngle",
-		Pitch = {-30, 30},
-		Yaw = {-90, 90},
-		Rate = 200,
 
-		NoPitch = true
-	})
+	chin:MakeTurret("ChinAngle", function(turret)
+		turret:SetPitch(-30, 30)
+		turret:SetYaw(-90, 90)
 
+		turret:SetRate(200)
+
+		turret:LockPitch(true)
+		turret:SetAlwaysActive(true)
+	end)
+
+	-- Chin gun
 	local chinGun = chin:AddBone("ChinGun")
 	chinGun:SetOffset(Vector(2, 0, 0))
-	chinGun:MakeTurret({
-		NetworkVar = "ChinAngle",
-		Slave = true,
 
-		NoYaw = true
-	})
+	chinGun:MakeTurret("ChinAngle", function(turret)
+		turret:SetSlave(true)
+		turret:LockYaw(true)
+	end, true)
 
 	-- Left leg
 	self:AddBone("LeftHip")

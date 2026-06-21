@@ -49,9 +49,3 @@ end
 function ENT:CanMove()
 	return self:HasDriver()
 end
-
-function ENT:CanAim(bone, config)
-	local ply = self:GetDriver()
-
-	return IsValid(ply) and not ply:KeyDown(IN_WALK)
-end

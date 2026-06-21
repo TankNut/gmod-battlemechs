@@ -82,11 +82,13 @@ function ENT:BuildModules()
 		ChainFire = true,
 		Mounts = {
 			{
-				Bone = "LeftWeapon",
-				Key = IN_ATTACK
+				Bone = "ChinGun",
+				Offset = Vector(27, 18.5),
+				Key = IN_ATTACK2
 			}, {
-				Bone = "RightWeapon",
-				Key = IN_ATTACK
+				Bone = "ChinGun",
+				Offset = Vector(27, -19.5),
+				Key = IN_ATTACK2
 			}
 		}
 	})

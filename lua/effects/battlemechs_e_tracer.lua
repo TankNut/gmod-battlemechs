@@ -4,7 +4,7 @@ function EFFECT:Init(data)
 	self.Pos = data:GetStart()
 	self.Ent = data:GetEntity()
 
-	self.Start = self:GetMechTraceOrigin(self.Pos, self.Ent)
+	self.Start = self:GetTracerOrigin(self.Pos, self.Ent, data:GetAttachment())
 	self.End = data:GetOrigin()
 
 	self:SetRenderBoundsWS(self.Start, self.End)
@@ -22,8 +22,8 @@ function EFFECT:Init(data)
 	effects.TracerSound(self.Start, self.End, 2)
 end
 
-function EFFECT:GetMechTraceOrigin(pos, ent)
-	return pos
+function EFFECT:GetTracerOrigin(pos, ent, index)
+	return ent:GetTracerOrigin(pos, index)
 end
 
 function EFFECT:Think()

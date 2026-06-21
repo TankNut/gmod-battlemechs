@@ -79,9 +79,11 @@ function ENT:ChainFire(ply)
 		end
 	end
 
+	local delay = self:GetDelay() / #available
+
 	self:SetLastMount(chosenIndex)
 	self:FireMount(ply, chosenIndex)
-	self:SetNextAttack(CurTime() + self:GetDelay() / #available)
+	self:SetNextAttack(CurTime() + delay)
 end
 
 function ENT:MultiFire(ply)
@@ -134,33 +136,36 @@ function ENT:FireMount(ply, index)
 	mech:EmitSound("Weapon_SMG1.NPC_Single")
 end
 
-function ENT:FireWeapon(ply)
-	local mech = self:GetOwner()
-	local bone = mech:GetBone(self.Config.Bone)
+if CLIENT then
+	function ENT:GetTracerOrigin(pos, index)
+		local mech = self:GetOwner()
+		local mount = self.Config.Mounts[index]
 
-	ply:LagCompensation(true)
-
-	mech:FireBullets({
-		Src = bone.Pos,
-		Dir = bone.Ang:Forward(),
-		Attacker = ply,
-		Inflictor = self,
-		Damage = 10,
-		Spread = Vector(0.01, 0.01),
-		Tracer = 0,
-		Callback = function(_, tr, dmg)
-			local e = EffectData()
-			e:SetStart(tr.StartPos)
-			e:SetOrigin(tr.HitPos)
-			e:SetEntity(self)
-
-			util.Effect("battlemechs_e_tracer", e)
+		if mount.Offset then
+			return mech:GetBone(mount.Bone):LocalToWorld(mount.Offset)
 		end
-	}, true)
 
-	ply:LagCompensation(false)
+		return pos
+	end
 
-	mech:EmitSound("Weapon_SMG1.NPC_Single")
+	local forward = Color(255, 0, 0)
+	local right =   Color(0, 255, 0)
+	local up =      Color(0, 0, 255)
 
-	self:SetNextAttack(CurTime() + 0.1)
+	function ENT:DrawDebug()
+		local mech = self:GetOwner()
+
+		for index, mount in ipairs(self.Config.Mounts) do
+			if mount.Offset then
+				local bone = mech:GetBone(mount.Bone)
+				local pos, ang = bone:LocalToWorld(mount.Offset, angle_zero)
+
+				render.DrawLine(pos, pos + ang:Forward() * 10, forward)
+				render.DrawLine(pos, pos + ang:Right() * 10, right)
+				render.DrawLine(pos, pos + ang:Up() * 10, up)
+
+				battlemechs:DrawWorldText(bone:LocalToWorld(mount.Offset), string.format("%s[%s][%s]", self:GetClass(), self:GetModuleIndex(), index), true)
+			end
+		end
+	end
 end
