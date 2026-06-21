@@ -4,7 +4,7 @@ function EFFECT:Init(data)
 	self.Pos = data:GetStart()
 	self.Ent = data:GetEntity()
 
-	self.Start = self:GetTracerOrigin(self.Pos, self.Ent, data:GetAttachment())
+	self.Start = self.Ent:GetTracerOrigin(data:GetAttachment())
 	self.End = data:GetOrigin()
 
 	self:SetRenderBoundsWS(self.Start, self.End)
@@ -20,10 +20,6 @@ function EFFECT:Init(data)
 	self.Active = true
 
 	effects.TracerSound(self.Start, self.End, 2)
-end
-
-function EFFECT:GetTracerOrigin(pos, ent, index)
-	return ent:GetTracerOrigin(pos, index)
 end
 
 function EFFECT:Think()

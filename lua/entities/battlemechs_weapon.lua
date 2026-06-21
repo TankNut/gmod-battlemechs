@@ -4,14 +4,16 @@ DEFINE_BASECLASS("battlemechs_module")
 ENT.Base = "battlemechs_module"
 ENT.Author = "TankNut"
 
-ENT.TracerConfig = {
-	Mat = Material("effects/spark"),
-	Velocity = 8000,
-	Length = {128, 256},
-	Scale = {5, 6}
-}
+ENT.Delay = 60 / 600
 
-ENT.RPM = 600
+if CLIENT then
+	ENT.TracerConfig = {
+		Mat = Material("effects/spark"),
+		Velocity = 8000,
+		Length = {128, 256},
+		Scale = {5, 6}
+	}
+end
 
 function ENT:Initialize()
 	BaseClass.Initialize(self)
@@ -36,8 +38,16 @@ function ENT:DriverThink(ply)
 	end
 end
 
-function ENT:GetDelay()
-	return 60 / self.RPM
+function ENT:GetDelay(amount)
+	if self.Config.FixedDelay then
+		return self.Config.FixedDelay
+	end
+
+	if self.Config.ChainFire then
+		return self.Delay / amount
+	end
+
+	return self.Delay
 end
 
 function ENT:CanFireMount(ply, mount)
@@ -62,7 +72,7 @@ function ENT:ChainFire(ply)
 
 		self:SetLastMount(index)
 		self:FireMount(ply, index)
-		self:SetNextAttack(CurTime() + self:GetDelay())
+		self:SetNextAttack(CurTime() + self:GetDelay(#available))
 
 		return
 	end
@@ -79,28 +89,44 @@ function ENT:ChainFire(ply)
 		end
 	end
 
-	local delay = self:GetDelay() / #available
-
 	self:SetLastMount(chosenIndex)
 	self:FireMount(ply, chosenIndex)
-	self:SetNextAttack(CurTime() + delay)
+	self:SetNextAttack(CurTime() + self:GetDelay(#available))
 end
 
 function ENT:MultiFire(ply)
 	local mounts = self.Config.Mounts
-	local fired = false
+	local fired = 0
 
 	for index, mount in ipairs(mounts) do
 		if self:CanFireMount(ply, mount) then
 			self:FireMount(ply, index)
 
-			fired = true
+			fired = fired + 1
 		end
 	end
 
-	if fired then
-		self:SetNextAttack(CurTime() + self:GetDelay())
+	if fired > 0 then
+		self:SetNextAttack(CurTime() + self:GetDelay(fired))
 	end
+end
+
+function ENT:DoEffects(index, tr)
+	local tracer = EffectData()
+	tracer:SetStart(tr.StartPos)
+	tracer:SetOrigin(tr.HitPos)
+	tracer:SetAttachment(index)
+	tracer:SetEntity(self)
+
+	util.Effect("battlemechs_e_tracer", tracer)
+
+	local muzzle = EffectData()
+	muzzle:SetOrigin(tr.StartPos)
+	muzzle:SetAttachment(index)
+	muzzle:SetEntity(self)
+	muzzle:SetScale(2)
+
+	util.Effect("battlemechs_e_muzzle", muzzle)
 end
 
 function ENT:FireMount(ply, index)
@@ -120,14 +146,7 @@ function ENT:FireMount(ply, index)
 		Spread = Vector(0.01, 0.01),
 		Tracer = 0,
 		Callback = function(_, tr, dmg)
-			local e = EffectData()
-			e:SetStart(tr.StartPos)
-			e:SetOrigin(tr.HitPos)
-			e:SetAttachment(index)
-
-			e:SetEntity(self)
-
-			util.Effect("battlemechs_e_tracer", e)
+			self:DoEffects(index, tr)
 		end
 	}, true)
 
@@ -137,15 +156,10 @@ function ENT:FireMount(ply, index)
 end
 
 if CLIENT then
-	function ENT:GetTracerOrigin(pos, index)
-		local mech = self:GetOwner()
+	function ENT:GetTracerOrigin(index)
 		local mount = self.Config.Mounts[index]
 
-		if mount.Offset then
-			return mech:GetBone(mount.Bone):LocalToWorld(mount.Offset)
-		end
-
-		return pos
+		return self:GetOwner():GetBone(mount.Bone):LocalToWorld(mount.Offset)
 	end
 
 	local forward = Color(255, 0, 0)
