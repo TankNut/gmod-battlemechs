@@ -6,15 +6,6 @@ ENT.Author = "TankNut"
 
 ENT.Delay = 60 / 600
 
-if CLIENT then
-	ENT.TracerConfig = {
-		Mat = Material("effects/spark"),
-		Velocity = 8000,
-		Length = {128, 256},
-		Scale = {5, 6}
-	}
-end
-
 function ENT:Initialize()
 	BaseClass.Initialize(self)
 end
@@ -160,6 +151,15 @@ if CLIENT then
 		local mount = self.Config.Mounts[index]
 
 		return self:GetOwner():GetBone(mount.Bone):LocalToWorld(mount.Offset)
+	end
+
+	local material = Material("effects/spark")
+
+	function ENT:SetupTracer(tracer)
+		tracer.Material = material
+		tracer.Velocity = 8000
+		tracer.Length = math.Rand(128, 256)
+		tracer.Scale = math.Rand(5, 6)
 	end
 
 	local forward = Color(255, 0, 0)
