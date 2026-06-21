@@ -27,3 +27,8 @@ end
 
 function ENT:DriverThink(ply)
 end
+
+if CLIENT then
+	function ENT:DrawDebug()
+	end
+end

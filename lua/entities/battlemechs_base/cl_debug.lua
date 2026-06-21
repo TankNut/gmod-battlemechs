@@ -1,4 +1,4 @@
-local methods = {"Physics", "Bones", "Hitboxes", "Gait", "IK", "Turrets"}
+local methods = {"Physics", "Bones", "Hitboxes", "Gait", "IK", "Turrets", "Modules"}
 local convars = {}
 
 for index, name in ipairs(methods) do
@@ -127,6 +127,12 @@ function ENT:DebugTurrets()
 
 			render.DrawLine(bone.Pos, bone.Pos + ang:Forward() * 56756, forward, true)
 		end
+	end
+end
+
+function ENT:DebugModules()
+	for _, ent in ipairs(self.Modules) do
+		ent:DrawDebug()
 	end
 end
 
