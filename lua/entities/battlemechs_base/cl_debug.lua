@@ -113,7 +113,7 @@ function ENT:DebugTurrets()
 	for _, bone in pairs(self.Bones) do
 		local turret = bone.Turret
 
-		if turret and not (turret.Slave or turret.Torso) then
+		if turret and not turret.NoDebug then
 			local parent = bone.Parent
 			local forwardAngle
 
@@ -131,8 +131,10 @@ function ENT:DebugTurrets()
 end
 
 function ENT:DebugModules()
-	for _, ent in ipairs(self.Modules) do
-		ent:DrawDebug()
+	for _, v in ipairs(self.Modules) do
+		if IsValid(v.Entity) then
+			v.Entity:DrawDebug()
+		end
 	end
 end
 
