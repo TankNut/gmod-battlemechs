@@ -1,0 +1,8 @@
+UnlitGeneric
+{
+	$basetexture "battlemechs/trails/physbeam_white"
+	
+	$additive "1"
+	$vertexcolor "1"
+	$vertexalpha "1"
+}
