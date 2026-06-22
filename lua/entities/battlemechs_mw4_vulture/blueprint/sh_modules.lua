@@ -13,4 +13,18 @@ function ENT:BuildModules()
 			}
 		}
 	})
+
+	self:AddModule("battlemechs_weapon_laser", {
+		Mounts = {
+			{
+				Bone = "LeftWeapon",
+				Offset = Vector(58, 0, -3),
+				Key = IN_ATTACK
+			}, {
+				Bone = "RightWeapon",
+				Offset = Vector(58, 0, -3),
+				Key = IN_ATTACK
+			}
+		}
+	})
 end

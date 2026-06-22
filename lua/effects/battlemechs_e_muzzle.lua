@@ -12,7 +12,7 @@ for i = 1, 4 do
 end
 
 function EFFECT:Init(data)
-	self.Ent = data:GetEntity()
+	self.Entity = data:GetEntity()
 	self.Index = data:GetAttachment()
 
 	self.Scale = data:GetScale()
@@ -42,7 +42,7 @@ function EFFECT:Init(data)
 end
 
 function EFFECT:Think()
-	if not self.Ent:IsValid() or not self.Emitter:IsValid() then
+	if not self.Entity:IsValid() or not self.Emitter:IsValid() then
 		return false
 	end
 
@@ -56,7 +56,7 @@ function EFFECT:Think()
 end
 
 function EFFECT:Render()
-	local pos, ang = self.Ent:GetTracerOrigin(self.Index)
+	local pos, ang = self.Entity:GetTracerOrigin(self.Index)
 
 	self:SetPos(pos)
 
