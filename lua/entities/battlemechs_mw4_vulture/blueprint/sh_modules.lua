@@ -1,5 +1,5 @@
 function ENT:BuildModules()
-	self:AddModule("battlemechs_weapon", "", {
+	self:AddModule("battlemechs_weapon", {
 		ChainFire = true,
 		Mounts = {
 			{

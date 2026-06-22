@@ -5,11 +5,8 @@ function ENT:InitModules()
 	self:BuildModules()
 end
 
-function ENT:AddModule(class, group, config)
-	assert(#group == 0 or self.DamageGroups[group], "Module points to an invalid damage group!")
-
+function ENT:AddModule(class, config)
 	local id = table.insert(self.Modules, {
-		Group = group,
 		Config = config or {}
 	})
 
