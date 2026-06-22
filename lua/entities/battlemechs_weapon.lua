@@ -6,10 +6,6 @@ ENT.Author = "TankNut"
 
 ENT.Delay = 60 / 600
 
-function ENT:Initialize()
-	BaseClass.Initialize(self)
-end
-
 function ENT:SetupDataTables()
 	BaseClass.SetupDataTables(self)
 
@@ -41,6 +37,18 @@ function ENT:GetDelay(amount)
 	return self.Delay
 end
 
+function ENT:SetDelay(delay)
+	local now = CurTime()
+	local last = self:GetNextAttack()
+	local diff = now - last
+
+	if diff > engine.TickInterval() or diff < 0 then
+		last = now
+	end
+
+	self:SetNextAttack(last + delay)
+end
+
 function ENT:CanFireMount(ply, mount)
 	return ply:KeyDown(mount.Key)
 end
@@ -63,7 +71,7 @@ function ENT:ChainFire(ply)
 
 		self:SetLastMount(index)
 		self:FireMount(ply, index)
-		self:SetNextAttack(CurTime() + self:GetDelay(#available))
+		self:SetDelay(self:GetDelay(#available))
 
 		return
 	end
@@ -82,7 +90,7 @@ function ENT:ChainFire(ply)
 
 	self:SetLastMount(chosenIndex)
 	self:FireMount(ply, chosenIndex)
-	self:SetNextAttack(CurTime() + self:GetDelay(#available))
+	self:SetDelay(self:GetDelay(#available))
 end
 
 function ENT:MultiFire(ply)
@@ -98,7 +106,7 @@ function ENT:MultiFire(ply)
 	end
 
 	if fired > 0 then
-		self:SetNextAttack(CurTime() + self:GetDelay(fired))
+		self:SetDelay(self:GetDelay(fired))
 	end
 end
 
