@@ -93,6 +93,10 @@ end
 function ENT:SpawnFunction(ply, tr, classname)
 	local ent = BaseClass.SpawnFunction(self, ply, tr, classname)
 
+	if not IsValid(ent) then
+		return
+	end
+
 	ent:SetPos(ent:GetPos() + Vector(0, 0, ent:GetGroundOffset()))
 
 	return ent
