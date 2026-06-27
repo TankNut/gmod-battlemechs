@@ -25,7 +25,7 @@ end
 function ENT:OnStepStart(index, leg) end
 function ENT:OnStepFinish(index, leg)
 	if SERVER and self.FootstepSound then
-		self:PlaySound(leg.Pos + leg.Normal, self.FootstepSound)
+		self:MechEmitSound(self.FootstepSound, leg.Pos + leg.Normal)
 	end
 end
 

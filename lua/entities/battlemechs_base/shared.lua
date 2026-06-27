@@ -114,6 +114,8 @@ function ENT:Initialize()
 	self:InitHitboxes()
 	self:InitModules()
 
+	self.SoundCache = {}
+
 	if CLIENT then
 		local radius = self:GetMechRadius()
 		local bounds = Vector(radius, radius, radius)
@@ -274,6 +276,10 @@ function ENT:OnRemove()
 	if CLIENT then
 		self:ClearParts()
 		battlemechs:DestroyHUD(self)
+	end
+
+	for snd in pairs(self.SoundCache) do
+		self:StopSound(snd)
 	end
 end
 

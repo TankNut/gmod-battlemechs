@@ -68,10 +68,25 @@ function ENT:GetAimTrace()
 	})
 end
 
-function ENT:PlaySound(pos, name, level, pitch, volume, channel)
-	if pos then
-		EmitSound(name, pos, self:EntIndex(), channel, volume, level, 0, pitch)
+function ENT:MechEmitSound(snd, arg)
+	if snd == nil then return end
+
+	-- Looping sound
+	if arg == true then
+		self.SoundCache[snd] = self:StartLoopingSound(snd)
+	elseif isvector(arg) then
+		EmitSound(snd, arg, self:EntIndex())
 	else
-		self:EmitSound(name, level, pitch, volume, channel)
+		self:EmitSound(snd)
+	end
+end
+
+function ENT:MechStopSound(snd, arg)
+	if snd == nil then return end
+
+	if arg == true then
+		self:StopLoopingSound(self.SoundCache[snd] or -1)
+	else
+		self:StopSound(snd)
 	end
 end
