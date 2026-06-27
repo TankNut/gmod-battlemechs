@@ -28,8 +28,8 @@ end
 function ENT:DriverThink(ply)
 end
 
-function ENT:OnRemove()
-end
+function ENT:MechEmitSound(...) self:GetOwner():MechEmitSound(...) end
+function ENT:MechStopSound(...) self:GetOwner():MechStopSound(...) end
 
 if CLIENT then
 	function ENT:DrawDebug()

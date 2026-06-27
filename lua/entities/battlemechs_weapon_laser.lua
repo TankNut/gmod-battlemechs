@@ -1,7 +1,7 @@
 AddCSLuaFile()
-DEFINE_BASECLASS("battlemechs_module")
+DEFINE_BASECLASS("battlemechs_module_base")
 
-ENT.Base = "battlemechs_module"
+ENT.Base = "battlemechs_module_base"
 
 ENT.Delay = 0.1
 

@@ -56,6 +56,10 @@ if SERVER then
 			group:Set(remaining)
 		end
 
+		if health > 0 and remaining == 0 then
+			print("Damage Group broken", group.Name)
+		end
+
 		if debugConvar:GetBool() then
 			print(string.format("\t%s: %s -> %s (%s to hull)", group.Name, health, remaining, hullDamage))
 		end
