@@ -230,19 +230,21 @@ if SERVER then
 	end
 
 	function ENT:OnExit(ply)
-		local mins, maxs = ply:GetHull()
+		if ply:Alive() then
+			local mins, maxs = ply:GetHull()
 
-		local tr = util.TraceHull({
-			start = self:GetPos(),
-			endpos = self:GetPos() - Vector(0, 0, self.GroundOffset),
-			filter = {self, ply},
-			mask = MASK_PLAYERSOLID,
-			mins = mins,
-			maxs = maxs
-		})
+			local tr = util.TraceHull({
+				start = self:GetPos(),
+				endpos = self:GetPos() - Vector(0, 0, self.GroundOffset),
+				filter = {self, ply},
+				mask = MASK_PLAYERSOLID,
+				mins = mins,
+				maxs = maxs
+			})
 
-		ply:SetPos(tr.HitPos)
-		ply:SetEyeAngles(self:GetAngles())
+			ply:SetPos(tr.HitPos)
+			ply:SetEyeAngles(self:GetAngles())
+		end
 	end
 end
 
