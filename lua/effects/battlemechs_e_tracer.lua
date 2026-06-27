@@ -2,9 +2,9 @@ local material = Material("effects/spark")
 
 function EFFECT:Init(data)
 	self.Pos = data:GetStart()
-	self.Ent = data:GetEntity()
+	self.Entity = data:GetEntity()
 
-	self.Start = self.Ent:GetTracerOrigin(data:GetAttachment())
+	self.Start = self.Entity:GetTracerOrigin(data:GetAttachment())
 	self.End = data:GetOrigin()
 
 	self:SetRenderBoundsWS(self.Start, self.End)
@@ -18,7 +18,7 @@ function EFFECT:Init(data)
 	self.Scale = math.Rand(0.75, 0.9)
 	self.Color = Color(255, 255, 255)
 
-	self.Ent:SetupTracer(self)
+	self.Entity:SetupTracer(self)
 
 	effects.TracerSound(self.Start, self.End, 2)
 end
