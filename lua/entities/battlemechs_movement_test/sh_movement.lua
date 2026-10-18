@@ -3,7 +3,7 @@ AddCSLuaFile()
 function ENT:InitMovement()
 end
 
-function ENT:TracePlayerBBox(pos, dest, output)
+function ENT:TraceBBox(pos, dest, output)
 	return util.TraceHull({
 		start = pos,
 		endpos = dest,
@@ -52,8 +52,7 @@ end
 local numbumps = 4
 local MAX_CLIP_PLANES = 5
 
-function ENT:TryPlayerMove()
-	local mv = self.MoveData
+function ENT:TryMove(mv)
 	local pm = {} -- Trace result
 
 	local blocked, numplanes = 0, 0
@@ -70,7 +69,7 @@ function ENT:TryPlayerMove()
 			break
 		end
 
-		self:TracePlayerBBox(mv.Origin, mv.Origin + mv.Velocity * time_left, pm)
+		self:TraceBBox(mv.Origin, mv.Origin + mv.Velocity * time_left, pm)
 
 		allFraction = allFraction + pm.Fraction
 
@@ -81,7 +80,7 @@ function ENT:TryPlayerMove()
 
 		if pm.Fraction > 0 then
 			if pm.Fraction == 1 then
-				local stuck = self:TracePlayerBBox(pm.HitPos, pm.HitPos)
+				local stuck = self:TraceBBox(pm.HitPos, pm.HitPos)
 
 				if stuck.StartSolid or stuck.Fraction != 1 then
 					mv.Velocity:Zero()
@@ -169,17 +168,15 @@ function ENT:TryPlayerMove()
 	return blocked
 end
 
-local stepSize = 18
 local DIST_EPSILON = 0.03125
 
-function ENT:StepMove()
-	local mv = self.MoveData
+function ENT:StepMove(mv)
 	local endPos = Vector()
 
 	local pos = Vector(mv.Origin)
 	local vel = Vector(mv.Velocity)
 
-	self:TryPlayerMove()
+	self:TryMove(mv)
 
 	local downPos = Vector(mv.Origin)
 	local downVel = Vector(mv.Velocity)
@@ -190,21 +187,21 @@ function ENT:StepMove()
 
 	-- Move up to step over obstacles
 	endPos:Set(mv.Origin)
-	endPos.z = endPos.z + stepSize + DIST_EPSILON
+	endPos.z = endPos.z + mv.StepSize + DIST_EPSILON
 
-	local tr = self:TracePlayerBBox(mv.Origin, endPos)
+	local tr = self:TraceBBox(mv.Origin, endPos)
 
 	if not tr.StartSolid and not tr.AllSolid then
 		mv.Origin:Set(tr.HitPos)
 	end
 
-	self:TryPlayerMove()
+	self:TryMove(mv)
 
 	-- Try to move back down
 	endPos:Set(mv.Origin)
-	endPos.z = endPos.z - stepSize + DIST_EPSILON
+	endPos.z = endPos.z - mv.StepSize + DIST_EPSILON
 
-	self:TracePlayerBBox(mv.Origin, endPos, tr)
+	self:TraceBBox(mv.Origin, endPos, tr)
 
 	if tr.HitNormal.z < 0.7 then
 		mv.Origin:Set(downPos)
@@ -235,19 +232,17 @@ function ENT:StepMove()
 	mv.StepHeight = mv.StepHeight + math.max(mv.Origin.z - pos.z, 0)
 end
 
-function ENT:StayOnGround()
-	local mv = self.MoveData
-
+function ENT:StayOnGround(mv)
 	local start = Vector(mv.Origin)
 	local endpos = Vector(mv.Origin)
 
 	start.z = start.z + 2 -- Magic number?
-	endpos.z = endpos.z - stepSize
+	endpos.z = endpos.z - mv.StepSize
 
-	local tr = self:TracePlayerBBox(mv.Origin, start)
+	local tr = self:TraceBBox(mv.Origin, start)
 	start = tr.HitPos
 
-	self:TracePlayerBBox(start, endpos, tr)
+	self:TraceBBox(start, endpos, tr)
 
 	if tr.Fraction > 0 and tr.Fraction < 1 and not tr.StartSolid and tr.HitNormal.z >= 0.7 then
 		local delta = math.abs(mv.Origin.z - tr.HitPos.z)
@@ -258,30 +253,13 @@ function ENT:StayOnGround()
 	end
 end
 
-local con_gravity = GetConVar("sv_gravity")
+local sv_gravity = GetConVar("sv_gravity")
 
-function ENT:StartGravity()
-	local vel = self.MoveData.Velocity
-	local gravity = 1 * con_gravity:GetFloat()
-
-	vel.z = vel.z - gravity * 0.5 * FrameTime()
-	--vel.z = vel.z + self:GetAbsVelocity().z * FrameTime()
-
-	local temp = self:GetAbsVelocity()
-	temp.z = 0
-
-	self:SetAbsVelocity(temp)
+function ENT:ApplyGravity(mv)
+	mv.Velocity.z = mv.Velocity.z - mv.Gravity * sv_gravity:GetFloat() * 0.5 * FrameTime()
 end
 
-function ENT:FinishGravity()
-	local vel = self.MoveData.Velocity
-	local gravity = 1 * con_gravity:GetFloat()
-
-	vel.z = vel.z - gravity * 0.5 * FrameTime()
-end
-
-function ENT:ProcessInputs()
-	local mv = self.MoveData
+function ENT:ProcessInputs(mv)
 	local ply = self:GetDriver()
 
 	if ply:IsValid() then
@@ -302,26 +280,39 @@ function ENT:ProcessInputs()
 	end
 end
 
-function ENT:ProcessMovement()
-	self.MoveData = {
+function ENT:CreateMove()
+	return {
 		Origin = self:GetPos(),
 		Velocity = self:GetAbsVelocity(),
+		StepSize = 18,
+		Gravity = 1,
+
+		StickToGround = true,
+
+		-- Output
 		StepHeight = 0
 	}
+end
 
-	self:ProcessInputs()
+function ENT:FinishMove(mv)
+	self:SetPos(mv.Origin)
+	self:SetAbsVelocity(mv.Velocity)
+end
 
-	self:StartGravity()
+function ENT:ProcessMovement()
+	local mv = self:CreateMove()
 
-	self:StepMove()
-	--self:StayOnGround()
+	self:ProcessInputs(mv)
 
-	self:FinishGravity()
+	self:ApplyGravity(mv) -- Gravity is applied in two steps, I'm not entirely sure why
+	self:StepMove(mv)
 
-	self:SetPos(self.MoveData.Origin)
-	self:SetAbsVelocity(self.MoveData.Velocity)
+	if mv.StickToGround then
+		self:StayOnGround(mv)
+	end
 
-	print(self.MoveData.Velocity)
+	self:ApplyGravity(mv)
+	self:FinishMove(mv)
 end
 
 function ENT:PlayerPostThink()
