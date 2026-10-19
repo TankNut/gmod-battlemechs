@@ -22,6 +22,7 @@ ENT.Hull = {-- The size of the mech's collision hull, this is only used for move
 }
 
 include("sh_movement.lua")
+include("sh_physics.lua")
 
 function ENT:Initialize()
 	self:SetModel("models/props_lab/cactus.mdl")
@@ -30,31 +31,19 @@ function ENT:Initialize()
 	self:InitPhysics()
 	self:InitMovement()
 
-	if SERVER then
+	if CLIENT then
+		self:SetRenderBounds(self.Hull.Mins, self.Hull.Maxs)
+	else
 		self:CreateSeat()
 	end
 end
 
 function ENT:SetupDataTables()
 	self:NetworkVar("Entity", "Seat")
-end
 
-function ENT:InitPhysics()
-	local mins = self.Hull.Mins
-	local maxs = self.Hull.Maxs
+	self:NetworkVar("Bool", "IsFrozen")
 
-	self:EnableCustomCollisions(true)
-	self:SetCollisionBounds(mins, maxs)
-	self.PhysCollide = CreatePhysCollideBox(mins, maxs)
-
-	if SERVER then
-		self:PhysicsInitBox(mins, maxs)
-		self:MakePhysicsObjectAShadow(true, true)
-		self:SetMoveType(MOVETYPE_CUSTOM)
-
-		self:GetPhysicsObject():SetMaterial("player")
-		self:PhysWake()
-	end
+	self:NetworkVar("Vector", "CustomVelocity")
 end
 
 function ENT:Think()
@@ -62,6 +51,14 @@ function ENT:Think()
 
 	if SERVER and not self:HasDriver() then
 		self:ProcessMovement()
+	end
+
+	if CLIENT then
+		local should = self:GetDriver() == LocalPlayer()
+
+		if should != self:GetPredictable() then
+			self:SetPredictable(should)
+		end
 	end
 
 	return true
@@ -122,7 +119,11 @@ if SERVER then
 			})
 
 			ply:SetPos(tr.HitPos)
-			ply:SetEyeAngles(self:GetAngles())
+
+			local ang = self:GetAngles()
+			ang.r = 0
+
+			ply:SetEyeAngles(ang)
 		end
 	end
 end
@@ -135,26 +136,8 @@ function ENT:HasDriver()
 	return self:GetDriver():IsValid()
 end
 
-function ENT:TestCollision(start, delta, isbox, extends, mask)
-	if bit.band(mask, CONTENTS_GRATE) == 0 or not IsValid(self.PhysCollide) then
-		return
+if CLIENT then
+	function ENT:DrawTranslucent(flags)
+		render.DrawWireframeBox(self:GetPos(), angle_zero, self.Hull.Mins, self.Hull.Maxs, Color(255, 0, 0), true)
 	end
-
-	local max = extends
-	local min = -extends
-
-	max.z = max.z - min.z
-	min.z = 0
-
-	local hit, norm, frac = self.PhysCollide:TraceBox(self:GetPos(), angle_zero, start, start + delta, min, max)
-
-	if not hit then
-		return
-	end
-
-	return {
-		HitPos = hit,
-		Normal = norm,
-		Fraction = frac
-	}
 end

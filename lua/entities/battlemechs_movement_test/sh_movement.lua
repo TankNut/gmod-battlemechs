@@ -98,6 +98,12 @@ function ENT:TryMove(mv)
 		end
 
 		-- MoveHelper()->AddToTouched(pm, mv->m_vecVelocity)
+		if pm.Entity:IsValid() and not mv.TouchList[pm.Entity] then
+			mv.TouchList[pm.Entity] = {
+				Position = pm.HitPos,
+				Velocity = Vector(mv.Velocity)
+			}
+		end
 
 		if pm.HitNormal.z > 0.7 then
 			blocked = bit.bor(blocked, 0x01) -- Floor
@@ -281,22 +287,46 @@ function ENT:ProcessInputs(mv)
 end
 
 function ENT:CreateMove()
+	local vel = self:GetCustomVelocity()
+	-- local phys = self:GetPhysicsObject()
+
+	-- if phys:IsValid() then
+	-- 	vel:Add(phys:GetVelocity())
+	-- end
+
 	return {
 		Origin = self:GetPos(),
-		Velocity = self:GetAbsVelocity(),
+		Velocity = vel,
 		StepSize = 18,
 		Gravity = 1,
 
-		StickToGround = true,
+		StickToGround = false,
 
-		-- Output
-		StepHeight = 0
+		TouchList = {},
+		StepHeight = 0 -- Not sure where this is needed, if at all
 	}
 end
 
 function ENT:FinishMove(mv)
 	self:SetPos(mv.Origin)
-	self:SetAbsVelocity(mv.Velocity)
+	self:SetAngles(angle_zero)
+	self:SetCustomVelocity(mv.Velocity)
+
+	if SERVER then
+		local mass = self:GetPhysicsObject():GetMass() * engine.TickInterval()
+
+		for ent, data in pairs(mv.TouchList) do
+			if not ent:IsValid() then
+				continue
+			end
+
+			local phys = ent:GetPhysicsObject()
+
+			if phys:IsValid() then
+				phys:ApplyForceOffset(data.Velocity * mass, data.Position)
+			end
+		end
+	end
 end
 
 function ENT:ProcessMovement()
