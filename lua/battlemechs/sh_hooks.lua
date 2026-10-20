@@ -19,13 +19,11 @@ battlemechs:Hook("PlayerPostThink")
 if CLIENT then
 	function battlemechs:HookLocal(name)
 		hook.Add(name, "battlemechs", function(...)
-			local lp = LocalPlayer()
-
-			if not IsValid(lp) then
+			if not self.lp then
 				return
 			end
 
-			local mech = self:GetMech(lp)
+			local mech = self:GetMech(self.lp)
 
 			if not IsValid(mech) or not mech[name] then
 				return

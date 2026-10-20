@@ -28,6 +28,10 @@ end
 
 if CLIENT then
 	battlemechs.MODEL = 1
+
+	hook.Add("InitPostEntity", "battlemechs", function()
+		battlemechs.lp = LocalPlayer()
+	end)
 end
 
 sound.Add({
