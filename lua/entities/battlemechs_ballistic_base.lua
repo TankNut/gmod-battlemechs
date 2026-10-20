@@ -45,7 +45,9 @@ function ENT:FireWeapon(ply)
 		Spread = self.Spread,
 		Tracer = 0,
 		Callback = function(_, tr, dmg)
+			self:SuppressHostEvents(ply)
 			self:DoEffects(self:GetMountIndex(), tr)
+			self:SuppressHostEvents(NULL)
 		end
 	}, true)
 

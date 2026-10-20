@@ -30,14 +30,18 @@ function ENT:AddModule(class, config)
 	end
 end
 
-function ENT:UpdateModules()
+function ENT:CallModule(name, ...)
 	for _, v in ipairs(self.Modules) do
-		v.Entity:ModuleThink()
+		local ent = v.Entity
+
+		if ent:IsValid() and ent[name] then
+			ent[name](ent, ...)
+		end
 	end
 end
 
-function ENT:PlayerPostThink(ply)
+function ENT:UpdateModules()
 	for _, v in ipairs(self.Modules) do
-		v.Entity:DriverThink(ply)
+		v.Entity:ModuleThink()
 	end
 end

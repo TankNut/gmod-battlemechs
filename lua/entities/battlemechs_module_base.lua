@@ -16,20 +16,22 @@ function ENT:Initialize()
 	self.Module.Entity = self
 
 	self.Config = self.Module.Config
+
+	self:AddEFlags(EFL_NO_THINK_FUNCTION)
 end
 
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", "ModuleIndex")
 end
 
-function ENT:ModuleThink()
-end
-
-function ENT:DriverThink(ply)
-end
-
 function ENT:MechEmitSound(...) self:GetOwner():MechEmitSound(...) end
 function ENT:MechStopSound(...) self:GetOwner():MechStopSound(...) end
+
+function ENT:SuppressHostEvents(ply)
+	if SERVER and not game.SinglePlayer() then
+		SuppressHostEvents(ply)
+	end
+end
 
 if CLIENT then
 	function ENT:DrawDebug()

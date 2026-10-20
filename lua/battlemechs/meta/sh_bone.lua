@@ -1,3 +1,5 @@
+AddCSLuaFile()
+
 local BONE = {}
 
 function BONE:Initialize(mech, name, parent)
@@ -43,13 +45,7 @@ function BONE:LocalToWorld(pos, ang)
 end
 
 function BONE:Update()
-	if self.Updated then
-		return
-	end
-
 	if self.Parent then
-		self.Parent:Update()
-
 		if self.Offset then
 			local offset = self.Offset
 
@@ -60,16 +56,17 @@ function BONE:Update()
 		end
 	end
 
-	if self.Turret then
-		self.Turret:Update()
-	end
-
 	for _, callback in ipairs(self.Callbacks) do
 		callback(self.Mech, self)
 	end
 
 	self:UpdateHitboxes()
-	self.Updated = true
+end
+
+function BONE:Tick()
+	if self.Turret then
+		self.Turret:Tick()
+	end
 end
 
 function BONE:UpdateHitboxes()

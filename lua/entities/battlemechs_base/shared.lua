@@ -76,6 +76,7 @@ include("sh_hitboxes.lua")
 include("sh_ik.lua")
 include("sh_modules.lua")
 include("sh_movement.lua")
+include("sh_think.lua")
 include("sh_view.lua")
 
 include("sh_interface.lua")
@@ -152,6 +153,7 @@ end
 
 function ENT:SetupDataTables()
 	self:NetworkVar("Entity", "Seat")
+	self:NetworkVar("Angle", "LookAngle")
 
 	-- Gait
 	self:NetworkVar("Float", "WalkCycle")
@@ -164,28 +166,6 @@ function ENT:SetupDataTables()
 	self:InitDamageGroups()
 
 	self:CreateNetworkVars()
-end
-
-function ENT:Think()
-	self:PhysWake()
-
-	if SERVER then
-		self:ProcessDamageEvents()
-	end
-
-	self:UpdateBones()
-	self:UpdateLegs()
-
-	if CLIENT then
-		self:UpdateThirdPerson()
-		self:UpdateHUD()
-	end
-
-	self:UpdateModules()
-
-	self:NextThink(CurTime())
-
-	return true
 end
 
 if SERVER then
@@ -255,14 +235,18 @@ function ENT:GetDriver()
 end
 
 function ENT:HasDriver()
-	return IsValid(self:GetDriver())
+	return self:GetDriver():IsValid()
 end
 
 function ENT:GetLookAng()
 	local ply = self:GetDriver()
 
-	if not IsValid(ply) then
+	if not ply:IsValid() then
 		return self:GetAngles()
+	end
+
+	if CLIENT and ply != LocalPlayer() then
+		return self:GetLookAngle()
 	end
 
 	return ply:LocalEyeAngles()

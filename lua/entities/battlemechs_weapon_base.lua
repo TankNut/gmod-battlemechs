@@ -112,15 +112,17 @@ function ENT:FireWeapon(ply)
 	self:MechEmitSound(self.Sounds.Fire)
 end
 
-function ENT:DriverThink(ply)
+function ENT:Tick(ply)
+	if not ply:IsValid() then
+		return
+	end
+
 	local active = self:CanFire() and self:ShouldFire(ply)
 	local time = CurTime()
 
 	local duration = self:GetFireDuration()
 
-	if not game.SinglePlayer() then
-		SuppressHostEvents(ply)
-	end
+	self:SuppressHostEvents(ply)
 
 	ply:LagCompensation(true)
 
@@ -148,9 +150,7 @@ function ENT:DriverThink(ply)
 
 	ply:LagCompensation(false)
 
-	if not game.SinglePlayer() then
-		SuppressHostEvents(NULL)
-	end
+	self:SuppressHostEvents(NULL)
 end
 
 if CLIENT then

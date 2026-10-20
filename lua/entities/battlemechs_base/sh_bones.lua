@@ -45,10 +45,6 @@ function ENT:UpdateBones()
 	self.BoneTrace = self:GetAimTrace()
 
 	for _, bone in ipairs(self.Bones) do
-		bone.Updated = nil
-	end
-
-	for _, bone in ipairs(self.Bones) do
 		bone:Update()
 	end
 

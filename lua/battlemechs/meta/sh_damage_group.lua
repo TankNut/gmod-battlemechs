@@ -1,3 +1,5 @@
+AddCSLuaFile()
+
 local GROUP = {}
 
 function GROUP:Initialize(mech, name, health, bones)

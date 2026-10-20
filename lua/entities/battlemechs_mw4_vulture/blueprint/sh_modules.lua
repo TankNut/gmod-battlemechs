@@ -1,3 +1,5 @@
+AddCSLuaFile()
+
 function ENT:BuildModules()
 	self:AddModule("battlemechs_laser_base", {
 		Bone = "LeftWeapon",

@@ -9,6 +9,9 @@ function EFFECT:Init(data)
 	self.Trace = self.Entity:GetTrace()
 	self.Start = self.Entity:GetTracerOrigin(self.Index)
 
+	self:SetPos(self.Trace.HitPos)
+	self:SetRenderBoundsWS(self.Start, self.Trace.HitPos)
+
 	self.Material = material
 	self.Scale = 16
 	self.Brightness = 3
@@ -48,17 +51,17 @@ function EFFECT:Render()
 	render.SetMaterial(self.Material)
 
 	for i = 0, math.ceil(self.Brightness) - 1 do
+		local brightness = (self.Brightness - i) * 255
+
 		render.StartBeam(2)
-			local brightness = (self.Brightness - i) * 255
+		self.Color.a = math.min(brightness, 255)
+		render.AddBeam(self.Start, self.Scale, texcoord, self.Color)
 
-			self.Color.a = math.min(brightness, 255)
-			render.AddBeam(self.Start, self.Scale, texcoord, self.Color)
+		-- Decrease brightness as we approach our max range
+		brightness = (1 - self.Trace.Fraction) * brightness
 
-			-- Decrease brightness as we approach our max range
-			brightness = (1 - self.Trace.Fraction) * brightness
-
-			self.Color.a = math.min(brightness, 255)
-			render.AddBeam(self.Trace.HitPos, self.Scale, texcoord + length / 1024, self.Color)
+		self.Color.a = math.min(brightness, 255)
+		render.AddBeam(self.Trace.HitPos, self.Scale, texcoord + length / 1024, self.Color)
 		render.EndBeam()
 	end
 end

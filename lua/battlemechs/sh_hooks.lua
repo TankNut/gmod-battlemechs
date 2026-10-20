@@ -4,7 +4,7 @@ function battlemechs:Hook(name)
 	hook.Add(name, "battlemechs", function(ply, ...)
 		local mech = self:GetMech(ply)
 
-		if not IsValid(mech) or not mech[name] then
+		if not mech:IsValid() or not mech[name] then
 			return
 		end
 
@@ -25,7 +25,7 @@ if CLIENT then
 
 			local mech = self:GetMech(self.lp)
 
-			if not IsValid(mech) or not mech[name] then
+			if not mech:IsValid() or not mech[name] then
 				return
 			end
 
@@ -63,7 +63,7 @@ else
 	end)
 
 	hook.Add("PlayerShouldTakeDamage", "battlemechs", function(ply)
-		if IsValid(battlemechs:GetMech(ply)) then
+		if battlemechs:GetMech(ply):IsValid() then
 			return false
 		end
 	end)
