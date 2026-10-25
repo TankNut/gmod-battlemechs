@@ -23,7 +23,7 @@ function ENT:AddBone(name, parent)
 end
 
 function ENT:UpdateRootBone(bone)
-	bone.Ang = self:GetAngles()
+	bone.Ang = self:GetMechAngles()
 
 	local offset = self:GetGaitOffset()
 	offset:Rotate(bone.Ang)

@@ -18,9 +18,11 @@ ENT.DisableDuplicator = true
 -- Every other type of value is passed along without modification
 
 -- Movement related fields
-ENT.Hull = {-- The size of the mech's collision hull, this is only used for movement. Keep it off the ground so it doesn't catch on any bumps
-	Mins = Vector(-48, -48, -16),
-	Maxs = Vector(48, 48, 55)
+ENT.Hull = {
+	Size = 64, -- Length and Width
+	Height = 105, -- Height above the entity origin
+	Offset = 135, -- How high the origin sits above the ground
+	Step = 96 -- How far the bottom of the hull sits from the ground, enables stepping over objects
 }
 
 ENT.GroundOffset = 110 -- How far above the ground the mech sits
@@ -75,7 +77,6 @@ include("sh_helpers.lua")
 include("sh_hitboxes.lua")
 include("sh_ik.lua")
 include("sh_modules.lua")
-include("sh_movement.lua")
 include("sh_think.lua")
 include("sh_view.lua")
 
@@ -89,18 +90,28 @@ if CLIENT then
 	include("cl_debug.lua")
 	include("cl_hud.lua")
 	include("cl_parts.lua")
+else
+	include("sv_movement.lua")
 end
 
-function ENT:SpawnFunction(ply, tr, classname)
-	local ent = BaseClass.SpawnFunction(self, ply, tr, classname)
+if SERVER then
+	function ENT:SpawnFunction(ply, tr, classname)
+		local ent = BaseClass.SpawnFunction(self, ply, tr, classname)
 
-	if not IsValid(ent) then
-		return
+		if not IsValid(ent) then
+			return
+		end
+
+		local offset = self.Hull.Offset
+
+		ent:SetPos(tr.HitPos + Vector(0, 0, offset))
+		ent:SetAngles(angle_zero)
+
+		local yaw = math.NormalizeAngle(tr.Normal:Angle().y + 180)
+		ent:SetMechAngles(Angle(0, yaw, 0))
+
+		return ent
 	end
-
-	ent:SetPos(ent:GetPos() + Vector(0, 0, ent:GetGroundOffset()))
-
-	return ent
 end
 
 function ENT:Initialize()
@@ -108,7 +119,6 @@ function ENT:Initialize()
 	self:DrawShadow(false)
 
 	self:InitPhysics()
-	self:InitMovement()
 
 	self:InitBones()
 	self:InitLegs()
@@ -127,24 +137,6 @@ function ENT:Initialize()
 		hook.Add("PreDrawHUD", self, self.PreDrawHUD)
 	else
 		self:CreateSeat()
-	end
-end
-
-function ENT:InitPhysics()
-	if IsValid(self.PhysCollide) then
-		self.PhysCollide:Destroy()
-	end
-
-	local mins = self.Hull.Mins
-	local maxs = self.Hull.Maxs
-
-	self:EnableCustomCollisions(true)
-	self:SetCollisionBounds(mins, maxs)
-	self.PhysCollide = CreatePhysCollideBox(mins, maxs)
-
-	if SERVER then
-		self:PhysicsInitBox(mins, maxs, "solidmetal")
-		self:SetSolid(SOLID_VPHYSICS)
 
 		self:SetMaxHealth(self.BaseHealth)
 		self:SetHealth(self.BaseHealth)
@@ -153,19 +145,48 @@ end
 
 function ENT:SetupDataTables()
 	self:NetworkVar("Entity", "Seat")
-	self:NetworkVar("Angle", "LookAngle")
 
-	-- Gait
+	self:NetworkVar("Angle", "MechAngles")
+	self:NetworkVar("Angle", "MechAngleDelta")
+
+	self:NetworkVar("Vector", "MechVelocity")
+
 	self:NetworkVar("Float", "WalkCycle")
 	self:NetworkVar("Vector", "GaitOffset")
 
-	-- Movement
 	self:NetworkVar("Bool", "OnGround")
-	self:NetworkVar("Vector", "MechVelocity")
 
 	self:InitDamageGroups()
-
 	self:CreateNetworkVars()
+end
+
+function ENT:InitPhysics()
+	if self.PhysCollide then
+		self.PhysCollide:Destroy()
+	end
+
+	local phys = self:GetPhysicsObject()
+	local frozen = false
+
+	if phys:IsValid() then
+		frozen = not phys:IsMotionEnabled()
+	end
+
+	local hull = self.Hull
+
+	self.Mins = Vector(-hull.Size, -hull.Size, -hull.Offset + hull.Step)
+	self.Maxs = Vector(hull.Size, hull.Size, hull.Height)
+
+	self:EnableCustomCollisions(true)
+	self:SetCollisionBounds(self.Mins, self.Maxs)
+	self.PhysCollide = CreatePhysCollideBox(self.Mins, self.Maxs)
+
+	if SERVER then
+		self:PhysicsInitBox(self.Mins, self.Maxs, "solidmetal")
+		self:SetSolid(SOLID_VPHYSICS)
+
+		self:GetPhysicsObject():EnableMotion(not frozen)
+	end
 end
 
 if SERVER then
@@ -201,12 +222,7 @@ if SERVER then
 	end
 
 	function ENT:OnEnter(ply)
-		local dir = self:GetForward()
-
-		dir.z = 0
-		dir:Normalize()
-
-		ply:SetEyeAngles(dir:Angle())
+		ply:SetEyeAngles(self:GetMechAngles())
 
 		self:SetThirdPersonMode(ply)
 	end
@@ -214,10 +230,13 @@ if SERVER then
 	function ENT:OnExit(ply)
 		if ply:Alive() then
 			local mins, maxs = ply:GetHull()
+			local distance = math.sqrt(self.Hull.Size^2 * 2)
+			local dir = self:GetMechAngles():Forward() * distance
+			dir.z = dir.z - self.Hull.Offset
 
 			local tr = util.TraceHull({
 				start = self:GetPos(),
-				endpos = self:GetPos() - Vector(0, 0, self.GroundOffset),
+				endpos = self:GetPos() + dir,
 				filter = {self, ply},
 				mask = MASK_PLAYERSOLID,
 				mins = mins,
@@ -225,7 +244,7 @@ if SERVER then
 			})
 
 			ply:SetPos(tr.HitPos)
-			ply:SetEyeAngles(self:GetAngles())
+			ply:SetEyeAngles(self:GetMechAngles())
 		end
 	end
 end
@@ -236,20 +255,6 @@ end
 
 function ENT:HasDriver()
 	return self:GetDriver():IsValid()
-end
-
-function ENT:GetLookAng()
-	local ply = self:GetDriver()
-
-	if not ply:IsValid() then
-		return self:GetAngles()
-	end
-
-	if CLIENT and ply != LocalPlayer() then
-		return self:GetLookAngle()
-	end
-
-	return ply:LocalEyeAngles()
 end
 
 function ENT:OnRemove()
@@ -268,6 +273,8 @@ function ENT:OnRemove()
 end
 
 function ENT:OnReloaded()
+	self:InitPhysics()
+
 	self:InitBones()
 	self:InitLegs()
 	self:InitHitboxes()

@@ -6,19 +6,6 @@ end
 function ENT:BuildBones(root)
 end
 
-function ENT:UpdateRootBone(bone)
-	local offset = self:GetGaitOffset()
-
-	local pos = self:GetPos()
-	local ang = self:GetAngles()
-
-	offset:Rotate(self:GetAngles())
-	pos:Add(offset)
-
-	bone.Pos = pos
-	bone.Ang = ang
-end
-
 function ENT:BuildLegs()
 end
 
@@ -47,5 +34,5 @@ function ENT:BuildModules()
 end
 
 function ENT:CanMove()
-	return self:HasDriver()
+	return self:GetOnGround()
 end

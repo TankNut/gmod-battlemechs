@@ -5,15 +5,9 @@ function ENT:Think()
 
 	if SERVER then
 		self:ProcessDamageEvents()
-
-		if self:HasDriver() then
-			self:SetLookAngle(self:GetDriver():LocalEyeAngles())
-		else
-			self:Tick(NULL)
-		end
 	end
 
-	self:CallModule("PreThink")
+	self:Tick(self:GetDriver())
 
 	self:UpdateLegs()
 	self:UpdateBones()
@@ -21,7 +15,7 @@ function ENT:Think()
 	self:CallModule("Think")
 
 	if CLIENT then
-		self:UpdateThirdPerson()
+		self:UpdateThirdPersonState()
 		self:UpdateHUD()
 	end
 
@@ -30,22 +24,35 @@ function ENT:Think()
 	return true
 end
 
---[[
-Turrets need to be split into two funcs, one that updates the network var (Tick) and one that updates the actual bone (could that be handled through a callback?)
-
-Bones continue to update frequently on the client and regularly on the server for smoothness (this means that turrets need to save their own values so that bones can fetch from those)
-]]
-
 function ENT:Tick(ply)
-	self:CallModule("PreTick", ply)
+	if CLIENT then -- Only gets called with a valid player
+		self:UpdateThirdPersonState()
+	end
 
-	for _, bone in ipairs(self.Bones) do
-		bone:Tick()
+	-- This should probably be moved elsewhere
+	if ply:IsValid() then
+		local left = ply:KeyDown(IN_MOVELEFT) and 1 or 0
+		local right = ply:KeyDown(IN_MOVERIGHT) and 1 or 0
+
+		local direction = right - left
+		local delta = Angle()
+
+		if direction != 0 then
+			delta.y = -(direction * 70 * FrameTime())
+
+			local ang = self:GetMechAngles()
+			ang:Add(delta)
+
+			self:SetMechAngles(ang)
+		end
+
+		-- Record the change in angle so we can rotate our forward velocity by the same amount in PhysicsUpdate
+		self:SetMechAngleDelta(delta)
 	end
 
 	self:CallModule("Tick", ply)
 end
 
 function ENT:PlayerPostThink(ply)
-	self:Tick(ply)
+	--self:Tick(ply)
 end

@@ -106,7 +106,7 @@ function TURRET:BoneCallback()
 	local mech = self.Mech
 	local bone = self.Bone
 
-	local forwardAngle = bone.Parent and bone.Parent.Ang or mech:GetAngles()
+	local forwardAngle = bone.Parent and bone.Parent.Ang or mech:GetMechAngles()
 	local ang = self:GetNetworkVar()
 
 	if self.NoPitch then ang.p = 0 end
@@ -125,7 +125,7 @@ function TURRET:Tick()
 	local bone = self.Bone
 
 	local ang = self:GetNetworkVar()
-	local forwardAngle = bone.Parent and bone.Parent.Ang or mech:GetAngles()
+	local forwardAngle = bone.Parent and bone.Parent.Ang or mech:GetMechAngles()
 	local targetAngle = self:GetAngle(forwardAngle)
 
 	if not targetAngle then

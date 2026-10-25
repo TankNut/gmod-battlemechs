@@ -51,7 +51,7 @@ function ENT:UpdateGait()
 
 	if not self:CanMove() and (oldCycle == 0 or cycle > 1) then
 		for _, leg in ipairs(self.Legs) do
-			local offset = self:LocalToWorld(leg.Offset)
+			local offset = self:MechToWorld(leg.Offset)
 			local target, normal = self:FindGround(offset, leg.MaxLength)
 
 			leg.Ground = target
@@ -71,8 +71,8 @@ function ENT:UpdateGait()
 		return
 	elseif not self:GetOnGround() then
 		for _, leg in ipairs(self.Legs) do
-			leg.Pos = self:LocalToWorld(leg.Offset - Vector(0, 0, groundOffset * 0.75))
-			leg.Ground = self:FindGround(self:LocalToWorld(leg.Offset), leg.MaxLength)
+			leg.Pos = self:MechToWorld(leg.Offset - Vector(0, 0, groundOffset * 0.75))
+			leg.Ground = self:FindGround(self:MechToWorld(leg.Offset), leg.MaxLength)
 
 			leg.Normal = self:GetUp()
 		end
@@ -105,7 +105,7 @@ function ENT:UpdateGait()
 			end
 		end
 
-		local offset = self:LocalToWorld(leg.Offset)
+		local offset = self:MechToWorld(leg.Offset)
 		local target, normal = self:FindGround(offset + vel, leg.MaxLength * 1.5)
 
 		local distance = target:Distance(leg.Ground)
@@ -158,7 +158,7 @@ function ENT:UpdateGait()
 			leg.Moving = false
 		end
 
-		local sideOffset = (self:WorldToLocal(leg.Pos) - leg.Offset).x / (stepSize / 4)
+		local sideOffset = (self:WorldToMech(leg.Pos) - leg.Offset).x / (stepSize / 4)
 
 		local y = sideOffset * leg.Offset:GetNormalized().y * sideStep
 		local z = -(leg.Pos:Distance(offset) - groundOffset) / upStep

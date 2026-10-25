@@ -6,12 +6,13 @@ for index, name in ipairs(methods) do
 end
 
 local physicsColor = Color(255, 191, 0)
+local stepColor = Color(255, 0, 0)
 
 local forward = Color(255, 0, 0)
 local right =   Color(0, 255, 0)
 local up =      Color(0, 0, 255)
 
-local length = 10
+local arrow = Material("widgets/arrow.png", "nocull smooth mips")
 
 local function drawBox(pos, ang, mins, maxs, color)
 	local oldAlpha = color.a
@@ -28,8 +29,26 @@ local function drawBox(pos, ang, mins, maxs, color)
 	color.a = oldAlpha
 end
 
+local function drawArrow(pos, ang, length, color)
+	local dir = isangle(ang) and ang:Forward() or ang
+
+	cam.IgnoreZ(true)
+		render.SetMaterial(arrow)
+		render.DrawBeam(pos, pos + dir * length, length * 0.125, 1, 0, color)
+	cam.IgnoreZ(false)
+end
+
 function ENT:DebugPhysics()
-	drawBox(self:GetPos(), self:GetAngles(), self.Hull.Mins, self.Hull.Maxs, physicsColor)
+	local mins, maxs = self:GetCollisionBounds()
+	local pos = self:GetPos()
+
+	drawBox(pos, angle_zero, mins, maxs, physicsColor)
+
+	maxs.z = mins.z
+	mins.z = mins.z - self.Hull.Step
+
+	drawBox(pos, angle_zero, mins, maxs, stepColor)
+	drawArrow(pos, self:GetMechAngles(), 100, physicsColor)
 end
 
 function ENT:DebugBones()
@@ -90,11 +109,11 @@ function ENT:DebugGait()
 		end
 
 		if leg.Ground and leg.OldNormal then
-			render.DrawLine(leg.Ground, leg.Ground + leg.OldNormal * length, forward)
+			render.DrawLine(leg.Ground, leg.Ground + leg.OldNormal * 10, forward)
 		end
 
 		if leg.Pos and leg.Normal then
-			render.DrawLine(leg.Pos, leg.Pos + leg.Normal * length, right)
+			render.DrawLine(leg.Pos, leg.Pos + leg.Normal * 10, right)
 		end
 	end
 end
@@ -120,7 +139,7 @@ function ENT:DebugTurrets()
 			if parent then
 				forwardAngle = parent.Ang
 			else
-				forwardAngle = self:GetAngles()
+				forwardAngle = self:GetMechAngles()
 			end
 
 			local ang = forwardAngle + self["Get" .. turret.NetworkVar](self)

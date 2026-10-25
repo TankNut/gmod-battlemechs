@@ -1,11 +1,11 @@
 AddCSLuaFile()
 
-function ENT:GetMoveVelocity()
-	if CLIENT then
-		return self:GetMechVelocity()
-	else
-		return self.MoveData.Velocity
-	end
+function ENT:MechToWorld(pos, ang)
+	return LocalToWorld(pos, ang or angle_zero, self:GetPos(), self:GetMechAngles())
+end
+
+function ENT:WorldToMech(pos, ang)
+	return WorldToLocal(pos, ang or angle_zero, self:GetPos(), self:GetMechAngles())
 end
 
 function ENT:GetMechRadius()
@@ -13,7 +13,7 @@ function ENT:GetMechRadius()
 end
 
 function ENT:GetMoveStat(val)
-	local scale = math.Clamp(math.Remap(self:GetMoveVelocity():Length2D(), self.WalkSpeed, self.RunSpeed, 0, 1), 0, 1)
+	local scale = math.Clamp(math.Remap(self:GetMechVelocity():Length2D(), self.WalkSpeed, self.RunSpeed, 0, 1), 0, 1)
 
 	if istable(val) then
 		return Lerp(scale, val[1], val[2])
@@ -24,48 +24,8 @@ function ENT:GetMoveStat(val)
 	return val
 end
 
-function ENT:GetViewOrigin()
-	local ply = self:GetDriver()
-	local ang = IsValid(ply) and ply:LocalEyeAngles() or self:GetAngles()
-
-	local thirdperson = self:GetSeat():GetThirdPersonMode()
-
-	if thirdperson then
-		local config = self.ThirdPersonSettings
-		local origin = LocalToWorld(config.Pos, angle_zero, self:GetPos(), ang)
-
-		local tr = util.TraceHull({
-			start = origin,
-			endpos = origin + (ang:Forward() * -config.Distance),
-			mask = MASK_SOLID,
-			filter = self,
-			mins = Vector(-4, -4, -4),
-			maxs = Vector(4, 4, 4),
-		})
-
-		return tr.HitPos, ang
-	else
-		local config = self.FirstPersonSettings
-
-		if config.Bone then
-			return self:GetBone(config.Bone):LocalToWorld(config.Pos), ang
-		else
-			return self:LocalToWorld(config.Pos, ang)
-		end
-	end
-end
-
-function ENT:GetAimTrace()
-	local pos, ang = self:GetViewOrigin()
-
-	return util.TraceHull({
-		start = pos,
-		endpos = pos + ang:Forward() * 56756,
-		mask = MASK_SHOT,
-		filter = table.Add({self}, self.Hitboxes),
-		mins = Vector(-4, -4, -4),
-		maxs = Vector(4, 4, 4),
-	})
+function ENT:GetGroundOffset()
+	return self.Hull.Offset
 end
 
 function ENT:MechEmitSound(snd, arg)
