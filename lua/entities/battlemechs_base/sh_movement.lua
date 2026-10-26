@@ -67,8 +67,7 @@ function ENT:ApplyRotation(mv)
 	local direction = right - left
 
 	if direction != 0 then
-		local delta = Angle(0, -(direction * 70 * FrameTime()), 0)
-
+		local delta = Angle(0, -(direction * self.TurnRate * mv.Delta), 0)
 		local ang = self:GetMechAngles()
 		ang:Add(delta)
 
