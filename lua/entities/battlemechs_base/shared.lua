@@ -77,6 +77,7 @@ include("sh_helpers.lua")
 include("sh_hitboxes.lua")
 include("sh_ik.lua")
 include("sh_modules.lua")
+include("sh_movement.lua")
 include("sh_think.lua")
 include("sh_view.lua")
 
@@ -90,8 +91,6 @@ if CLIENT then
 	include("cl_debug.lua")
 	include("cl_hud.lua")
 	include("cl_parts.lua")
-else
-	include("sv_movement.lua")
 end
 
 if SERVER then

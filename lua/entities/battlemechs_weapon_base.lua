@@ -122,10 +122,6 @@ function ENT:Tick(ply)
 
 	local duration = self:GetFireDuration()
 
-	self:SuppressHostEvents(ply)
-
-	ply:LagCompensation(true)
-
 	if active and self:GetNextAttack() <= time then
 		if duration == 0 then
 			self:StartFiring()
@@ -147,10 +143,6 @@ function ENT:Tick(ply)
 		self:StopFiring()
 		self:SetFireDuration(0)
 	end
-
-	ply:LagCompensation(false)
-
-	self:SuppressHostEvents(NULL)
 end
 
 if CLIENT then

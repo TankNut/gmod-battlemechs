@@ -92,7 +92,7 @@ function TURRET:GetAngle(forwardAngle)
 		return self:Callback(forwardAngle)
 	else
 		if self:CanAim() then
-			local target = (self.Mech.BoneTrace.HitPos - self.Bone.Pos):Angle()
+			local target = (self.Mech:GetAimTrace().HitPos - self.Bone.Pos):Angle()
 			target:Normalize()
 
 			return target
@@ -118,6 +118,7 @@ end
 
 function TURRET:Tick()
 	if self.Slave then
+		self.Bone:Update()
 		return
 	end
 
@@ -133,7 +134,7 @@ function TURRET:Tick()
 	end
 
 	local relTargetAngle = targetAngle - forwardAngle
-	local delta = self.Mech.BoneDelta
+	local delta = FrameTime()
 
 	local pitch = math.Clamp(math.NormalizeAngle(relTargetAngle.p), self.Pitch[1], self.Pitch[2])
 	local yaw = math.Clamp(math.NormalizeAngle(relTargetAngle.y), self.Yaw[1], self.Yaw[2])
@@ -159,6 +160,8 @@ function TURRET:Tick()
 	end
 
 	self:SetNetworkVar(ang)
+
+	bone:Update()
 end
 
 battlemechs.Turret = setmetatable(TURRET, {__call = function(self, _, ...)

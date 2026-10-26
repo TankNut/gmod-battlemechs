@@ -1,68 +1,30 @@
-local convar_resolution = GetConVar("battlemechs_ground_resolution")
+AddCSLuaFile()
+
+if CLIENT then
+	return
+end
 
 function ENT:GetStepDown()
 	return self.Hull.Step * 2
 end
 
 function ENT:GetGroundTrace(mv)
-	local resolution = convar_resolution:GetInt()
+	local pos = self:GetPos()
 
-	local space = self.Hull.Size * 2
-	local space2 = space * 0.5
+	local tr = util.TraceHull({
+		start = pos,
+		endpos = pos - Vector(0, 0, 56756),
+		filter = {self, "player", "npc*"},
+		collisiongroup = COLLISION_GROUP_PLAYER_MOVEMENT,
+		mins = self.Mins,
+		maxs = self.Maxs
+	})
 
-	local size = space / resolution
-	local size2 = size * 0.5
+	mv.GroundLevel = tr.HitPos.z + self.Mins.z
+	mv.Normal = tr.HitNormal
+	mv.Slope = math.NormalizeAngle(tr.HitNormal:Angle().p + 90)
 
-	local mins = Vector(-size2, -size2, self.Mins.z)
-	local maxs = Vector(size2, size2, self.Maxs.z)
-
-	local offset = Vector()
-	local pos = self:GetPos() - Vector(space2 - size2, space2 - size2, 0)
-
-	local ground = 0
-	local normal = Vector()
-	local highest = -math.huge
-
-	for x = 0, resolution - 1 do
-		for y = 0, resolution - 1 do
-			offset:Set(pos)
-			offset.x = offset.x + x * size
-			offset.y = offset.y + y * size
-
-			local tr = util.TraceHull({
-				start = offset,
-				endpos = offset - Vector(0, 0, 56756),
-				filter = self,
-				collisiongroup = COLLISION_GROUP_WORLD,
-				mins = mins,
-				maxs = maxs
-			})
-
-			-- debugoverlay.SweptBox(tr.StartPos, tr.HitPos, mins, maxs, angle_zero, 0, Color(0, 0, 255))
-
-			ground = ground + tr.HitPos.z
-			normal:Add(tr.HitNormal)
-
-			highest = math.max(highest, tr.HitPos.z)
-		end
-	end
-
-	local count = resolution * resolution
-
-	normal:Div(count)
-	normal:Normalize()
-
-
-	mv.GroundLevel = math.max(ground / count, highest - self.Hull.Step + 16) + mins.z
-	mv.Normal = normal
-	mv.Slope = math.NormalizeAngle(normal:Angle().p + 90)
-
-	mv.OnGround = (offset.z - mv.GroundLevel) < self:GetStepDown()
-
-	-- local dpos = self:GetPos()
-	-- dpos.z = mv.GroundLevel
-
-	-- debugoverlay.Cross(dpos, 5, 0, color_white, true)
+	mv.OnGround = (pos.z - mv.GroundLevel) < self:GetStepDown()
 end
 
 function ENT:CheckGround(mv)
@@ -86,6 +48,30 @@ function ENT:CheckGround(mv)
 
 	-- Snap to ground
 	vel.z = diff * 10
+end
+
+function ENT:ApplyRotation(mv)
+	local ply = mv.Driver
+
+	if not ply:IsValid() then
+		return
+	end
+
+	local left = ply:KeyDown(IN_MOVELEFT) and 1 or 0
+	local right = ply:KeyDown(IN_MOVERIGHT) and 1 or 0
+
+	local direction = right - left
+
+	if direction != 0 then
+		local delta = Angle(0, -(direction * 70 * FrameTime()), 0)
+
+		local ang = self:GetMechAngles()
+		ang:Add(delta)
+
+		mv.Velocity:Rotate(delta)
+
+		self:SetMechAngles(ang)
+	end
 end
 
 function ENT:ApplyFriction(mv)
@@ -163,6 +149,7 @@ function ENT:PhysicsUpdate(phys)
 
 	if mv.OnGround then
 		self:CheckGround(mv)
+		self:ApplyRotation(mv)
 
 		mv.Velocity:Rotate(self:GetMechAngleDelta())
 
@@ -178,4 +165,12 @@ function ENT:PhysicsUpdate(phys)
 
 	self:SetMechVelocity(mv.Velocity)
 	self:SetOnGround(mv.OnGround)
+
+	self:UpdateBones()
+
+	for _, bone in ipairs(self.Bones) do
+		bone:Tick()
+	end
+
+	self:CallModule("Tick", mv.Driver)
 end

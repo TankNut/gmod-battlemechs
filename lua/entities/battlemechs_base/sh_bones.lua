@@ -41,12 +41,7 @@ function ENT:GetBone(name)
 end
 
 function ENT:UpdateBones()
-	self.BoneDelta = CurTime() - self.LastBoneThink
-	self.BoneTrace = self:GetAimTrace()
-
 	for _, bone in ipairs(self.Bones) do
 		bone:Update()
 	end
-
-	self.LastBoneThink = CurTime()
 end

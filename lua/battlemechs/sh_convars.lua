@@ -6,5 +6,3 @@ end
 
 CreateConVar("battlemechs_hull_damage_1", 1, bit.bor(FCVAR_ARCHIVE, FCVAR_REPLICATED), "How much damage is passed through to a mech's hull when the hit section is healthy.", 0)
 CreateConVar("battlemechs_hull_damage_2", 0.25, bit.bor(FCVAR_ARCHIVE, FCVAR_REPLICATED), "How much damage is passed through to a mech's hull when the hit section is damaged.", 0)
-
-CreateConVar("battlemechs_ground_resolution", 3, bit.bor(FCVAR_ARCHIVE, FCVAR_REPLICATED), "How many ground traces to perform per axis, the ground position and slope are taken as averages", 1)
