@@ -27,12 +27,6 @@ end
 function ENT:MechEmitSound(...) self:GetOwner():MechEmitSound(...) end
 function ENT:MechStopSound(...) self:GetOwner():MechStopSound(...) end
 
-function ENT:SuppressHostEvents(ply)
-	if SERVER and not game.SinglePlayer() then
-		SuppressHostEvents(ply)
-	end
-end
-
 if CLIENT then
 	function ENT:DrawDebug()
 	end

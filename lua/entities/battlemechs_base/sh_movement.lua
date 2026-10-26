@@ -151,8 +151,6 @@ function ENT:PhysicsUpdate(phys)
 		self:CheckGround(mv)
 		self:ApplyRotation(mv)
 
-		mv.Velocity:Rotate(self:GetMechAngleDelta())
-
 		self:ApplyFriction(mv)
 		self:Accelerate(mv)
 	end

@@ -146,8 +146,6 @@ function ENT:SetupDataTables()
 	self:NetworkVar("Entity", "Seat")
 
 	self:NetworkVar("Angle", "MechAngles")
-	self:NetworkVar("Angle", "MechAngleDelta")
-
 	self:NetworkVar("Vector", "MechVelocity")
 
 	self:NetworkVar("Float", "WalkCycle")
