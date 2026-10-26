@@ -1,28 +1,41 @@
 AddCSLuaFile()
 
-function ENT:Think()
-	self:PhysWake()
-
-	if CLIENT then -- Only gets called with a valid player
+if CLIENT then
+	function ENT:Think()
 		self:UpdateThirdPersonState()
-	else
-		self:ProcessDamageEvents()
-	end
 
-	self:UpdateLegs()
-
-	if CLIENT then
+		self:UpdateLegs()
 		self:UpdateBones()
-	end
 
-	self:CallModule("Think")
+		-- Need to figure out what the idea with this is
+		-- self:CallModule("Think")
 
-	if CLIENT then
-		self:UpdateThirdPersonState()
 		self:UpdateHUD()
 	end
+else
+	function ENT:Think()
+		self:PhysWake()
 
-	self:NextThink(CurTime())
+		self:ProcessDamageEvents() -- Last tick's damage
+		self:UpdateLegs()
 
-	return true
+		-- Need to figure out what the idea with this is
+		-- self:CallModule("Think")
+
+		self:NextThink(CurTime())
+
+		return true
+	end
+
+	function ENT:PhysicsUpdate(phys)
+		self:HandleMovement(phys)
+
+		self:UpdateBones()
+
+		for _, bone in ipairs(self.Bones) do
+			bone:Tick()
+		end
+
+		self:CallModule("Tick", self:GetDriver())
+	end
 end

@@ -28,6 +28,10 @@ function ENT:GetGroundTrace(mv)
 end
 
 function ENT:CheckGround(mv)
+	if not mv.OnGround then
+		return
+	end
+
 	local vel = mv.Velocity
 
 	local height = self.Hull.Offset
@@ -127,16 +131,14 @@ function ENT:Accelerate(mv)
 end
 
 function ENT:CreateMoveData(phys)
-	local vel = phys:GetVelocity()
-
 	return {
 		Delta = FrameTime(),
-		Velocity = vel,
+		Velocity = phys:GetVelocity(),
 		Driver = self:GetDriver(),
 	}
 end
 
-function ENT:PhysicsUpdate(phys)
+function ENT:HandleMovement(phys)
 	if phys:HasGameFlag(FVPHYSICS_PLAYER_HELD) then
 		self:SetOnGround(false)
 
@@ -146,9 +148,9 @@ function ENT:PhysicsUpdate(phys)
 	local mv = self:CreateMoveData(phys)
 
 	self:GetGroundTrace(mv)
+	self:CheckGround(mv)
 
 	if mv.OnGround then
-		self:CheckGround(mv)
 		self:ApplyRotation(mv)
 
 		self:ApplyFriction(mv)
@@ -163,12 +165,4 @@ function ENT:PhysicsUpdate(phys)
 
 	self:SetMechVelocity(mv.Velocity)
 	self:SetOnGround(mv.OnGround)
-
-	self:UpdateBones()
-
-	for _, bone in ipairs(self.Bones) do
-		bone:Tick()
-	end
-
-	self:CallModule("Tick", mv.Driver)
 end
