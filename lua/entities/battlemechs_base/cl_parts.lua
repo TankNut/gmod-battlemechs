@@ -43,7 +43,7 @@ function ENT:CreatePartEntity(part)
 end
 
 function ENT:DrawParts(flags, renderGroup)
-	local lp = LocalPlayer()
+	local lp = battlemechs.lp
 
 	if self.FirstPersonSettings.HideParts and lp == self:GetDriver() and not self:GetSeat():GetThirdPersonMode() and lp:GetViewEntity() == lp then
 		return
