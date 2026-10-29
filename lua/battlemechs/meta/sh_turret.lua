@@ -1,6 +1,6 @@
 AddCSLuaFile()
 
-local TURRET = {}
+local TURRET = battlemechs.Turret or {}
 
 function TURRET:Initialize(bone, var, noDebug)
 	self.Mech = bone.Mech

@@ -1,6 +1,6 @@
 AddCSLuaFile()
 
-local GROUP = {}
+local GROUP = battlemechs.DamageGroup or {}
 
 function GROUP:Initialize(mech, name, health, bones)
 	self.Mech = mech

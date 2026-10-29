@@ -1,6 +1,6 @@
 AddCSLuaFile()
 
-local BONE = {}
+local BONE = battlemechs.Bone or {}
 
 function BONE:Initialize(mech, name, parent)
 	self.Mech = mech
