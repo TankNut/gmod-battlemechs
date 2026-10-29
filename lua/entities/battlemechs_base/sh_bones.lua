@@ -33,10 +33,6 @@ function ENT:UpdateRootBone(bone)
 end
 
 function ENT:GetBone(name)
-	if not name then
-		return
-	end
-
 	return self.BoneMap[name]
 end
 
