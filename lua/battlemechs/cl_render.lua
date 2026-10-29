@@ -62,7 +62,10 @@ function battlemechs:DrawTracer(startpos, endpos, velocity, length, scale, time,
 	local cross = lineDir:Cross(viewDir)
 	cross:Normalize()
 
-	tracerColor:Set(color or color_white)
+	tracerColor.r = color.r
+	tracerColor.g = color.g
+	tracerColor.b = color.b
+	tracerColor.a = color.a
 
 	render.DrawBeam(startPoint, endPoint, scale * 2, 0, offset, tracerColor)
 

@@ -2,8 +2,6 @@ AddCSLuaFile()
 
 battlemechs = battlemechs or {}
 
-include("sh_helpers.lua")
-
 AddCSLuaFile("cl_render.lua")
 
 if CLIENT then
