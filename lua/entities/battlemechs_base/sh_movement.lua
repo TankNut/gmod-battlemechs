@@ -39,7 +39,7 @@ function ENT:CheckGround(mv)
 
 	if mv.Slope > self.MaxSlope then
 		local gravity = physenv.GetGravity().z * mv.Delta
-		local dir = Vector(mv.HitNormal)
+		local dir = Vector(mv.Normal)
 
 		dir.x = dir.x * gravity
 		dir.y = dir.y * gravity
