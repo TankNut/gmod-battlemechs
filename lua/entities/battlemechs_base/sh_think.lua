@@ -32,10 +32,6 @@ else
 
 		self:UpdateBones()
 
-		for _, bone in ipairs(self.Bones) do
-			bone:Tick()
-		end
-
 		self:CallModule("Tick", self:GetDriver())
 	end
 end

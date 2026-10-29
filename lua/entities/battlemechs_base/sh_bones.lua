@@ -36,8 +36,21 @@ function ENT:GetBone(name)
 	return self.BoneMap[name]
 end
 
-function ENT:UpdateBones()
-	for _, bone in ipairs(self.Bones) do
-		bone:Update()
+if CLIENT then
+	function ENT:UpdateBones()
+		for _, bone in ipairs(self.Bones) do
+			bone:Update()
+		end
+	end
+else
+	function ENT:UpdateBones()
+		for _, bone in ipairs(self.Bones) do
+			bone:Update() -- For turrets, make sure the bone is positioned correctly
+
+			if bone.Turret then
+				bone.Turret:Tick() -- Update the turret
+				bone:Update() -- Update the bone again to apply the new turret angles
+			end
+		end
 	end
 end

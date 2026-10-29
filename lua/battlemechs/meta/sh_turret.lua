@@ -52,56 +52,6 @@ function TURRET:GetNetworkVar()
 	return self.Mech["Get" .. self.NetworkVar](self.Mech)
 end
 
-function TURRET:SetNetworkVar(val)
-	self.Mech["Set" .. self.NetworkVar](self.Mech, val)
-end
-
-local function approachAngle(from, to, delta, range)
-	if not istable(range) then
-		return math.ApproachAngle(from, to, delta)
-	end
-
-	from = math.NormalizeAngle(from)
-	to = math.NormalizeAngle(to)
-
-	local diff = math.AngleDifference(to, from)
-
-	if from + diff < range[1] or from + diff > range[2] then
-		diff = -diff
-	end
-
-	return math.Approach(from, from + diff, delta)
-end
-
-function TURRET:CanAim()
-	local ply = self.Mech:GetDriver()
-
-	if not ply:IsValid() then
-		return false
-	end
-
-	return self.AlwaysActive or not ply:KeyDown(IN_WALK)
-end
-
-function TURRET:GetFallbackAngle(forwardAngle)
-	return nil -- Don't update
-end
-
-function TURRET:GetAngle(forwardAngle)
-	if self.Callback then
-		return self:Callback(forwardAngle)
-	else
-		if self:CanAim() then
-			local target = (self.Mech:GetAimTrace().HitPos - self.Bone.Pos):Angle()
-			target:Normalize()
-
-			return target
-		else
-			return self:GetFallbackAngle(forwardAngle)
-		end
-	end
-end
-
 function TURRET:BoneCallback()
 	local mech = self.Mech
 	local bone = self.Bone
@@ -116,52 +66,101 @@ function TURRET:BoneCallback()
 	_, bone.Ang = LocalToWorld(vector_origin, ang, bone.Pos, forwardAngle)
 end
 
-function TURRET:Tick()
-	if self.Slave then
-		self.Bone:Update()
-		return
+if SERVER then
+	function TURRET:SetNetworkVar(val)
+		self.Mech["Set" .. self.NetworkVar](self.Mech, val)
 	end
 
-	local mech = self.Mech
-	local bone = self.Bone
+	local function approachAngle(from, to, delta, range)
+		if not istable(range) then
+			return math.ApproachAngle(from, to, delta)
+		end
 
-	local ang = self:GetNetworkVar()
-	local forwardAngle = bone.Parent and bone.Parent.Ang or mech:GetMechAngles()
-	local targetAngle = self:GetAngle(forwardAngle)
+		from = math.NormalizeAngle(from)
+		to = math.NormalizeAngle(to)
 
-	if not targetAngle then
-		return
+		local diff = math.AngleDifference(to, from)
+
+		if from + diff < range[1] or from + diff > range[2] then
+			diff = -diff
+		end
+
+		return math.Approach(from, from + diff, delta)
 	end
 
-	local relTargetAngle = targetAngle - forwardAngle
-	local delta = FrameTime()
+	function TURRET:CanAim()
+		local ply = self.Mech:GetDriver()
 
-	local pitch = math.Clamp(math.NormalizeAngle(relTargetAngle.p), self.Pitch[1], self.Pitch[2])
-	local yaw = math.Clamp(math.NormalizeAngle(relTargetAngle.y), self.Yaw[1], self.Yaw[2])
-	local roll = math.Clamp(math.NormalizeAngle(relTargetAngle.r), self.Roll[1], self.Roll[2])
+		if not ply:IsValid() then
+			return false
+		end
 
-	if self.Rate == 0 then
-		ang.p = pitch
-		ang.y = yaw
-		ang.r = roll
-	else
-		local target = Angle(pitch, yaw, roll)
-		local diff = target - ang
+		return self.AlwaysActive or not ply:KeyDown(IN_WALK)
+	end
 
-		diff:Normalize()
+	function TURRET:GetFallbackAngle(forwardAngle)
+		return nil -- Don't update
+	end
 
-		local ratio = math.max(math.abs(diff.p), math.abs(diff.y), math.abs(diff.r))
+	function TURRET:GetAngle(forwardAngle)
+		if self.Callback then
+			return self:Callback(forwardAngle)
+		else
+			if self:CanAim() then
+				local target = (self.Mech:GetAimTrace().HitPos - self.Bone.Pos):Angle()
+				target:Normalize()
 
-		if ratio > 0 then
-			ang.p = approachAngle(ang.p, pitch, (diff.p / ratio) * self.Rate * delta, range)
-			ang.y = approachAngle(ang.y, yaw, (diff.y / ratio) * self.Rate * delta, range)
-			ang.r = approachAngle(ang.r, roll, (diff.r / ratio) * self.Rate * delta, range)
+				return target
+			else
+				return self:GetFallbackAngle(forwardAngle)
+			end
 		end
 	end
 
-	self:SetNetworkVar(ang)
+	function TURRET:Tick()
+		if self.Slave then
+			return
+		end
 
-	bone:Update()
+		local mech = self.Mech
+		local bone = self.Bone
+
+		local ang = self:GetNetworkVar()
+		local forwardAngle = bone.Parent and bone.Parent.Ang or mech:GetMechAngles()
+		local targetAngle = self:GetAngle(forwardAngle)
+
+		if not targetAngle then
+			return
+		end
+
+		local relTargetAngle = targetAngle - forwardAngle
+		local delta = FrameTime()
+
+		local pitch = math.Clamp(math.NormalizeAngle(relTargetAngle.p), self.Pitch[1], self.Pitch[2])
+		local yaw = math.Clamp(math.NormalizeAngle(relTargetAngle.y), self.Yaw[1], self.Yaw[2])
+		local roll = math.Clamp(math.NormalizeAngle(relTargetAngle.r), self.Roll[1], self.Roll[2])
+
+		if self.Rate == 0 then
+			ang.p = pitch
+			ang.y = yaw
+			ang.r = roll
+		else
+			local target = Angle(pitch, yaw, roll)
+			local diff = target - ang
+
+			diff:Normalize()
+
+			local ratio = math.max(math.abs(diff.p), math.abs(diff.y), math.abs(diff.r))
+
+			if ratio > 0 then
+				ang.p = approachAngle(ang.p, pitch, (diff.p / ratio) * self.Rate * delta, range)
+				ang.y = approachAngle(ang.y, yaw, (diff.y / ratio) * self.Rate * delta, range)
+				ang.r = approachAngle(ang.r, roll, (diff.r / ratio) * self.Rate * delta, range)
+			end
+		end
+
+		self:SetNetworkVar(ang)
+	end
 end
 
 battlemechs.Turret = setmetatable(TURRET, {__call = function(self, _, ...)
