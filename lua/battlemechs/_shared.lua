@@ -27,6 +27,19 @@ end
 if CLIENT then
 	battlemechs.MODEL = 1
 
+	battlemechs.IsDoingProperties = false
+	battlemechs.GetProperties = battlemechs.GetProperties or properties.GetHovered
+
+	function properties.GetHovered(pos, dir)
+		battlemechs.IsDoingProperties = true
+
+		local ent, trace = battlemechs.GetProperties(pos, dir)
+
+		battlemechs.IsDoingProperties = false
+
+		return ent, trace
+	end
+
 	hook.Add("InitPostEntity", "battlemechs", function()
 		battlemechs.lp = LocalPlayer()
 	end)

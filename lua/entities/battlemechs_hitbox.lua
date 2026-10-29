@@ -53,6 +53,10 @@ end
 -- CONTENTS_HITBOX runs for bullets but not for physguns
 
 function ENT:TestCollision(start, delta, isbox, extends, mask)
+	if battlemechs.IsDoingProperties then
+		return
+	end
+
 	if bit.band(mask, CONTENTS_HITBOX) == 0 or not IsValid(self.PhysCollide) then
 		return
 	end
@@ -96,6 +100,10 @@ function ENT:OnRemove()
 			end
 		end
 	end
+end
+
+function ENT:CanProperty()
+	return false
 end
 
 if CLIENT then
