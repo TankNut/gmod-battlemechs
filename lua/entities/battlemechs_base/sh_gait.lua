@@ -49,7 +49,7 @@ function ENT:UpdateGait()
 	local sideStep = self:GetMoveStat(self.SideStep)
 	local upStep = self:GetMoveStat(self.UpStep)
 
-	if not self:CanMove() and (oldCycle == 0 or cycle > 1) then
+	if not self:GetOnGround() then
 		for _, leg in ipairs(self.Legs) do
 			local offset = self:MechToWorld(leg.Offset)
 			local target, normal = self:FindGround(offset, leg.MaxLength)
@@ -59,25 +59,9 @@ function ENT:UpdateGait()
 			leg.Target = target
 
 			leg.Normal = normal
-
-			local z = -(target:Distance(offset) - groundOffset) / upStep
-
-			gaitOffset.z = gaitOffset.z + z
 		end
 
-		self:SetGaitOffset(gaitOffset / #self.Legs)
-		self:SetWalkCycle(0)
-
-		return
-	elseif not self:GetOnGround() then
-		for _, leg in ipairs(self.Legs) do
-			leg.Pos = self:MechToWorld(leg.Offset - Vector(0, 0, groundOffset * 0.75))
-			leg.Ground = self:FindGround(self:MechToWorld(leg.Offset), leg.MaxLength)
-
-			leg.Normal = self:GetUp()
-		end
-
-		self:SetGaitOffset(Vector())
+		self:SetGaitOffset(vector_origin)
 		self:SetWalkCycle(0)
 
 		return
@@ -106,7 +90,7 @@ function ENT:UpdateGait()
 		end
 
 		local offset = self:MechToWorld(leg.Offset)
-		local target, normal = self:FindGround(offset + vel, leg.MaxLength * 1.5)
+		local target, normal = self:FindGround(offset + vel, leg.MaxLength * 1.2)
 
 		local distance = target:Distance(leg.Ground)
 		local hasTarget = distance > 5
@@ -114,10 +98,6 @@ function ENT:UpdateGait()
 		if canMove then
 			if hasTarget or leg.Moving then
 				leg.Target = target
-
-				-- if CLIENT and not leg.Moving then
-				-- 	leg.Debug = self:WorldToLocal(leg.Ground):Length2D()
-				-- end
 
 				-- Is GroundOffset still the best method to use here?
 				local bezier = math.QuadraticBezier(fraction,
@@ -147,11 +127,6 @@ function ENT:UpdateGait()
 
 			leg.Normal = normal
 			leg.OldNormal = normal
-
-			-- if CLIENT then
-			-- 	print("---", _, "---")
-			-- 	print(self:WorldToLocal(leg.Target):Length2D() - leg.Debug)
-			-- end
 
 			self:OnStepFinish(k, leg)
 
