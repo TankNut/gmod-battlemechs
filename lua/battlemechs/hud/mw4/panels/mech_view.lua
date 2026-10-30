@@ -9,8 +9,8 @@ local wireframe = Material("models/wireframe")
 function PANEL:DrawMech(mech, w, h)
 	local x, y = self:LocalToScreen(0, 0)
 
-	local ang = LocalPlayer():LocalEyeAngles()
-	local pos = mech:GetPos() - (ang:Forward() * mech:GetMechRadius() * 5)
+	local ang = battlemechs.lp:LocalEyeAngles()
+	local pos = mech:GetMechCenter() - (ang:Forward() * mech.Radius * 2.5)
 
 	cam.Start({
 		x = x, y = y,
