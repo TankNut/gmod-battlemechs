@@ -8,8 +8,17 @@ function ENT:WorldToMech(pos, ang)
 	return WorldToLocal(pos, ang or angle_zero, self:GetPos(), self:GetMechAngles())
 end
 
+function ENT:GetMechCenter()
+	return self:GetPos() + Vector(0, 0, (self.Hull.Height - self.Hull.Offset) / 2)
+end
+
 function ENT:GetMechRadius()
-	return math.max(self.GroundOffset, self:BoundingRadius())
+
+	local x = math.max(math.abs(self.Mins.x), math.abs(self.Maxs.x))
+	local y = math.max(math.abs(self.Mins.x), math.abs(self.Maxs.x))
+	local z = math.max(math.abs(self.Mins.x), math.abs(self.Maxs.x))
+
+	return math.sqrt(x^2 + y^2 + z^2)
 end
 
 function ENT:GetMoveStat(val)

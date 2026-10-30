@@ -25,7 +25,7 @@ function ENT:GetTrace()
 		start = bone.Pos,
 		endpos = bone.Pos + bone.Ang:Forward() * self.Range,
 		mask = MASK_SHOT,
-		filter = function(ent) return ent:GetOwner() != mech end
+		filter = mech
 	})
 end
 

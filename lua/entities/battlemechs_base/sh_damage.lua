@@ -27,8 +27,8 @@ if SERVER then
 		return 0
 	end
 
-	local mult1 = GetConVar("battlemechs_hull_damage_1")
-	local mult2 = GetConVar("battlemechs_hull_damage_2")
+	local cvar_mult1 = GetConVar("battlemechs_hull_damage_1")
+	local cvar_mult2 = GetConVar("battlemechs_hull_damage_2")
 
 	function ENT:GetHullDamage(index, health, damage)
 		local remaining = health - damage
@@ -38,11 +38,11 @@ if SERVER then
 			passthrough = math.abs(remaining)
 		end
 
-		return math.Truncate((damage - passthrough) * mult1:GetFloat())
-			+ math.Truncate(passthrough * mult2:GetFloat())
+		return math.Truncate((damage - passthrough) * cvar_mult1:GetFloat())
+			+ math.Truncate(passthrough * cvar_mult2:GetFloat())
 	end
 
-	local debugConvar = CreateConVar("battlemechs_debug_damage", 0, bit.bor(FCVAR_ARCHIVE, FCVAR_REPLICATED))
+	local cvar_debug = CreateConVar("battlemechs_debug_damage", 0, bit.bor(FCVAR_ARCHIVE, FCVAR_REPLICATED))
 
 	function ENT:TakeMechDamage(index, dmg)
 		local group = self.DamageGroups[index]
@@ -60,7 +60,7 @@ if SERVER then
 			print("Damage Group broken", group.Name)
 		end
 
-		if debugConvar:GetBool() then
+		if cvar_debug:GetBool() then
 			print(string.format("\t%s: %s -> %s (%s to hull)", group.Name, health, remaining, hullDamage))
 		end
 
