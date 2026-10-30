@@ -139,6 +139,8 @@ function ENT:Initialize()
 
 		self:SetMaxHealth(self.BaseHealth)
 		self:SetHealth(self.BaseHealth)
+
+		self:InitMovement()
 	end
 end
 

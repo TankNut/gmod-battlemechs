@@ -137,11 +137,24 @@ function ENT:CreateMoveData(phys)
 	}
 end
 
+function ENT:InitMovement()
+	self.PhysgunRotation = 0
+end
+
 function ENT:HandleMovement(phys)
 	if phys:HasGameFlag(FVPHYSICS_PLAYER_HELD) then
 		self:SetOnGround(false)
 
+		local yaw = phys:GetAngles().y
+		local ang = self:GetMechAngles()
+		ang.y = math.NormalizeAngle(ang.y + (yaw - self.PhysgunRotation))
+
+		self:SetMechAngles(ang)
+		self.PhysgunRotation = yaw
+
 		return
+	elseif self.PhysgunRotation != 0 then
+		self.PhysgunRotation = 0
 	end
 
 	local mv = self:CreateMoveData(phys)
