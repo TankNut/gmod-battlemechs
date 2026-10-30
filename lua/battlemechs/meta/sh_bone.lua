@@ -13,7 +13,6 @@ function BONE:Initialize(mech, name, parent)
 	self.Ang = Angle()
 
 	self.DamageGroup = mech.DamageMap[self.Name]
-	self.Hitboxes = {}
 	self.Callbacks = {}
 
 	mech.BoneMap[self.Name] = self
@@ -59,27 +58,11 @@ function BONE:Update()
 	for _, callback in ipairs(self.Callbacks) do
 		callback(self.Mech, self)
 	end
-
-	self:UpdateHitboxes()
 end
 
 function BONE:Tick()
 	if self.Turret then
 		self.Turret:Tick()
-	end
-end
-
-function BONE:UpdateHitboxes()
-	for _, hitbox in ipairs(self.Hitboxes) do
-		local pos, ang = LocalToWorld(hitbox:GetHitboxPos(), hitbox:GetHitboxAng(), self.Pos, self.Ang)
-
-		-- NaN check
-		if pos.x != pos.x then
-			continue
-		end
-
-		hitbox:SetPos(pos)
-		hitbox:SetAngles(ang)
 	end
 end
 
