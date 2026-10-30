@@ -2,7 +2,7 @@ local methods = {"Physics", "Bones", "Hitboxes", "Gait", "IK", "Turrets", "Modul
 local convars = {}
 
 for index, name in ipairs(methods) do
-	convars[index] = CreateClientConVar("battlemechs_debug_" .. string.lower(name), 0)
+	convars[index] = CreateClientConVar("battlemechs_debug_" .. string.lower(name), 0, true)
 end
 
 local physicsColor = Color(255, 191, 0)
@@ -13,16 +13,18 @@ local right =   Color(0, 255, 0)
 local up =      Color(0, 0, 255)
 
 local arrow = Material("widgets/arrow.png", "nocull smooth mips")
+local cvar_ignorez = CreateClientConVar("battlemechs_debug_ignorez", 0, true)
 
 local function drawBox(pos, ang, mins, maxs, color)
 	local oldAlpha = color.a
+	local ignorez = cvar_ignorez:GetBool()
 
 	color.a = 255
-	render.DrawWireframeBox(pos, ang, mins, maxs, color)
+	render.DrawWireframeBox(pos, ang, mins, maxs, color, not ignorez)
 
 	color.a = 10
 	render.SetColorMaterial()
-	cam.IgnoreZ(true)
+	cam.IgnoreZ(ignorez)
 	render.DrawBox(pos, ang, mins, maxs, color)
 	cam.IgnoreZ(false)
 
