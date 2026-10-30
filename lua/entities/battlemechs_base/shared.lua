@@ -232,13 +232,10 @@ if SERVER then
 	function ENT:OnExit(ply)
 		if ply:Alive() then
 			local mins, maxs = ply:GetHull()
-			local distance = math.sqrt(self.Hull.Size^2 * 2)
-			local dir = self:GetMechAngles():Forward() * distance
-			dir.z = dir.z - self.Hull.Offset
 
 			local tr = util.TraceHull({
 				start = self:GetPos(),
-				endpos = self:GetPos() + dir,
+				endpos = self:GetPos() + Vector(0, 0, self.Bounds.Mins.z),
 				filter = {self, ply},
 				mask = MASK_PLAYERSOLID,
 				mins = mins,
