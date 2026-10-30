@@ -1,41 +1,64 @@
 AddCSLuaFile()
 
 function ENT:InitHitboxes()
+	self:ClearHitboxes()
+
+	self.Hitboxes = {}
+
+	self:BuildHitboxes()
+end
+
+function ENT:ClearHitboxes()
 	if not self.Hitboxes then
-		self.Hitboxes = {}
+		return
 	end
 
-	if SERVER then
-		for _, ent in ipairs(self.Hitboxes) do
-			SafeRemoveEntity(ent)
+	for _, hitbox in ipairs(self.Hitboxes) do
+		if IsValid(hitbox.PhysCollide) then
+			hitbox.PhysCollide:Destroy()
 		end
-
-		self:BuildHitboxes()
 	end
 end
 
-if SERVER then
-	function ENT:AddHitbox(name, pos, ang, size)
-		local ent = ents.Create("battlemechs_hitbox")
-		local mins = Vector(0, -size.y * 0.5, -size.z * 0.5)
-		local maxs = Vector(size.x, size.y * 0.5, size.z * 0.5)
+function ENT:AddHitbox(name, pos, ang, size)
+	local mins = Vector(0, -size.y * 0.5, -size.z * 0.5)
+	local maxs = Vector(size.x, size.y * 0.5, size.z * 0.5)
 
-		ent:SetPos(self:LocalToWorld(pos))
-		ent:SetAngles(self:LocalToWorldAngles(ang))
+	table.insert(self.Hitboxes, {
+		Pos = pos,
+		Ang = ang,
 
-		ent:SetOwner(self)
+		Bone = self:GetBone(name),
+		PhysCollide = CreatePhysCollideBox(mins, maxs),
 
-		ent:SetHitboxIndex(self:GetBone(name).Index)
+		Mins = mins,
+		Maxs = maxs
+	})
+end
 
-		ent:SetHitboxPos(pos)
-		ent:SetHitboxAng(ang)
+function ENT:TestHitboxes(start, delta, isbox, extends, mask)
+	local max = extends
+	local min = -extends
 
-		ent:SetHitboxMins(mins)
-		ent:SetHitboxMaxs(maxs)
+	max.z = max.z - min.z
+	min.z = 0
 
-		ent:Spawn()
-		ent:Activate()
+	local closest = math.huge
+	local hit
 
-		self:DeleteOnRemove(ent)
+	for _, hitbox in ipairs(self.Hitboxes) do
+		local pos, ang = LocalToWorld(hitbox.Pos, hitbox.Ang, hitbox.Bone.Pos, hitbox.Bone.Ang)
+		local hitpos, normal, fraction = hitbox.PhysCollide:TraceBox(pos, ang, start, start + delta, min, max)
+
+		if hitpos and fraction < closest then
+			closest = fraction
+			hit = {
+				HitPos = hitpos,
+				Normal = normal,
+				Fraction = fraction
+			}
+		end
 	end
+
+	return hit
 end

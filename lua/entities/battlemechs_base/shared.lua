@@ -25,8 +25,6 @@ ENT.Hull = {
 	Step = 96 -- How far the bottom of the hull sits from the ground, enables stepping over objects
 }
 
-ENT.GroundOffset = 110 -- How far above the ground the mech sits
-
 ENT.MoveAcceleration = 400 -- Hammer units/s of acceleration when moving or slowing down
 ENT.MaxSlope = 40 -- The steepest slope a mech can walk on, any steeper and it'll start sliding down
 
@@ -59,7 +57,11 @@ ENT.ThirdPersonSettings = {
 -- Misc fields
 ENT.BaseHealth = 6000
 
-ENT.DrawRadius = 200 -- The radius that's added on top of ENT.Hull to determine the mech's render bounds
+ENT.Bounds = {
+	Mins = Vector(-120, -120, -135),
+	Maxs = Vector(120, 120, 120)
+}
+
 ENT.FootstepSound = "MW4.Footstep.Small"
 
 ENT.DrawDriver = {
@@ -124,14 +126,12 @@ function ENT:Initialize()
 	self:InitHitboxes()
 	self:InitModules()
 
+	self.Radius = (self.Bounds.Maxs - self.Bounds.Mins):Length() * 0.5
 	self.SoundCache = {}
 
 	if CLIENT then
-		local radius = self:GetMechRadius()
-		local bounds = Vector(radius, radius, radius)
-
 		self:InitParts()
-		self:SetRenderBounds(-bounds, bounds)
+		self:SetRenderBounds(self.Bounds.Mins, self.Bounds.Maxs)
 
 		hook.Add("PreDrawHUD", self, self.PreDrawHUD)
 	else
@@ -175,7 +175,10 @@ function ENT:InitPhysics()
 	self.Maxs = Vector(hull.Size, hull.Size, hull.Height)
 
 	self:EnableCustomCollisions(true)
-	self:SetCollisionBounds(self.Mins, self.Maxs)
+
+	self:SetCollisionBounds(self.Bounds.Mins, self.Bounds.Maxs)
+	self:SetSurroundingBounds(self.Bounds.Mins, self.Bounds.Maxs)
+
 	self.PhysCollide = CreatePhysCollideBox(self.Mins, self.Maxs)
 
 	if SERVER then
@@ -259,6 +262,8 @@ function ENT:OnRemove()
 		self.PhysCollide:Destroy()
 	end
 
+	self:ClearHitboxes()
+
 	if CLIENT then
 		self:ClearParts()
 		battlemechs:DestroyHUD(self)
@@ -270,6 +275,8 @@ function ENT:OnRemove()
 end
 
 function ENT:OnReloaded()
+	self.Radius = (self.Bounds.Maxs - self.Bounds.Mins):Length() * 0.5
+
 	self:InitPhysics()
 
 	self:InitBones()
@@ -333,8 +340,8 @@ end
 -- CONTENTS_HITBOX runs for bullets but not for physguns
 
 function ENT:TestCollision(start, delta, isbox, extends, mask)
-	if bit.band(mask, CONTENTS_GRATE) == 0 or not IsValid(self.PhysCollide) then
-		return
+	if mask != MASK_PLAYERSOLID then
+		return self:TestHitboxes(start, delta, isbox, extends, mask)
 	end
 
 	local max = extends
@@ -343,15 +350,15 @@ function ENT:TestCollision(start, delta, isbox, extends, mask)
 	max.z = max.z - min.z
 	min.z = 0
 
-	local hit, norm, frac = self.PhysCollide:TraceBox(self:GetPos(), self:GetAngles(), start, start + delta, min, max)
+	local hitpos, normal, fraction = self.PhysCollide:TraceBox(self:GetPos(), self:GetAngles(), start, start + delta, min, max)
 
-	if not hit then
+	if not hitpos then
 		return
 	end
 
 	return {
-		HitPos = hit,
-		Normal = norm,
-		Fraction = frac
+		HitPos = hitpos,
+		Normal = normal,
+		Fraction = fraction
 	}
 end
