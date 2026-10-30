@@ -39,7 +39,7 @@ local function drawArrow(pos, ang, length, color)
 end
 
 function ENT:DebugPhysics()
-	local mins, maxs = self:GetCollisionBounds()
+	local mins, maxs = Vector(self.Mins), Vector(self.Maxs)
 	local pos = self:GetPos()
 
 	drawBox(pos, angle_zero, mins, maxs, physicsColor)
@@ -63,32 +63,28 @@ end
 
 function ENT:DebugHitboxes()
 	if not self.Debug_HitboxCache then
-		self.Debug_HitboxCache = {}
+		local bones = {}
 
-		local count = table.Count(self.Bones)
-		local increment = 360 / count
-
-		for _, bone in ipairs(self.Bones) do
-			if #bone.Hitboxes > 0 then
-				table.insert(self.Debug_HitboxCache, HSVToColor(#self.Debug_HitboxCache * increment, 0.5, 1))
-			end
+		for _, hitbox in ipairs(self.Hitboxes) do
+			bones[hitbox.Bone.Index] = true
 		end
+
+		local increment = 300 / table.Count(bones)
+		local i = 0
+
+		for k in pairs(bones) do
+			bones[k] = HSVToColor(i * increment, 0.5, 1)
+			i = i + 1
+		end
+
+		self.Debug_HitboxCache = bones
 	end
 
-	local i = 1
+	for _, hitbox in ipairs(self.Hitboxes) do
+		local pos, ang = LocalToWorld(hitbox.Pos, hitbox.Ang, hitbox.Bone.Pos, hitbox.Bone.Ang)
+		local col = self.Debug_HitboxCache[hitbox.Bone.Index]
 
-	for _, bone in ipairs(self.Bones) do
-		local col = self.Debug_HitboxCache[i]
-
-		if #bone.Hitboxes == 0 then
-			continue
-		end
-
-		for _, hitbox in ipairs(bone.Hitboxes) do
-			drawBox(hitbox:GetPos(), hitbox:GetAngles(), hitbox:GetHitboxMins(), hitbox:GetHitboxMaxs(), col)
-		end
-
-		i = i + 1
+		drawBox(pos, ang, hitbox.Mins, hitbox.Maxs, col)
 	end
 end
 
