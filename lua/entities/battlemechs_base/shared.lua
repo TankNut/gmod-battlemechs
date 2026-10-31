@@ -335,9 +335,15 @@ if CLIENT then
 	end
 end
 
--- CONTENTS_GRATE runs for physguns but not for bullets
--- CONTENTS_HITBOX runs for bullets but not for physguns
+--[[
+	TestCollision is only called into for traces that pass into our , vphysics has it's own thing going on
 
+	Since player physics have funky behavior when clipping inside of a vphysics hull, we still have to
+	maintain a classic PhysCollide box and trace against that during player movement
+
+	Testing player movement against hitboxes wouldn't be a good time anyways since the player can't be pushed around by bone movement
+	which would result in the player clipping into the mech, just in a slightly different way instead
+]]
 function ENT:TestCollision(start, delta, isbox, extends, mask)
 	if mask != MASK_PLAYERSOLID then
 		return self:TestHitboxes(start, delta, isbox, extends, mask)
