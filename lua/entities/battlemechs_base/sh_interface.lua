@@ -32,7 +32,3 @@ end
 
 function ENT:BuildModules()
 end
-
-function ENT:CanMove()
-	return self:GetOnGround()
-end
