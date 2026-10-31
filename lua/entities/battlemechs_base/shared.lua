@@ -178,7 +178,7 @@ function ENT:InitPhysics()
 
 	self:EnableCustomCollisions(true)
 
-	self:SetCollisionBounds(self.Bounds.Mins, self.Bounds.Maxs)
+	self:SetCollisionBounds(self.Mins - Vector(0, 0, hull.Step), self.Maxs)
 	self:SetSurroundingBounds(self.Bounds.Mins, self.Bounds.Maxs)
 
 	self.PhysCollide = CreatePhysCollideBox(self.Mins, self.Maxs)
