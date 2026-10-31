@@ -159,8 +159,8 @@ local result = {}
 function ENT:FindGround(offset, maxLength)
 	if not trace then
 		trace = {
-			mins = Vector(-5, -5, 0),
-			maxs = Vector(5, 5, 0),
+			mins = Vector(-16, -16, 0),
+			maxs = Vector(16, 16, 0),
 			filter = function(ent) return ent != self and ent:GetOwner() != self end,
 			collisiongroup = COLLISION_GROUP_PLAYER_MOVEMENT,
 			output = result
