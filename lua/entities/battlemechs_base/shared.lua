@@ -187,7 +187,8 @@ function ENT:InitPhysics()
 		self:PhysicsInitBox(self.Mins, self.Maxs, "solidmetal")
 		self:SetSolid(SOLID_VPHYSICS)
 
-		self:GetPhysicsObject():EnableMotion(not frozen)
+		phys = self:GetPhysicsObject()
+		phys:EnableMotion(not frozen)
 	end
 end
 
@@ -336,7 +337,7 @@ if CLIENT then
 end
 
 --[[
-	TestCollision is only called into for traces that pass into our , vphysics has it's own thing going on
+	TestCollision is only called into for traces that pass into our surrounding bounds, vphysics has it's own thing going on
 
 	Since player physics have funky behavior when clipping inside of a vphysics hull, we still have to
 	maintain a classic PhysCollide box and trace against that during player movement
