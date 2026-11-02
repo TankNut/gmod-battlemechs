@@ -175,6 +175,10 @@ function ENT:HandleMovement(phys)
 	phys:SetVelocity(mv.Velocity)
 	phys:SetAngleVelocity(Vector(ang.r, ang.p, ang.y))
 
+	if mv.OnGround then
+		mv.Velocity:Add(physenv.GetGravity() * engine.TickInterval())
+	end
+
 	self:SetMechVelocity(mv.Velocity)
 	self:SetOnGround(mv.OnGround)
 end
