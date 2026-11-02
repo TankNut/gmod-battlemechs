@@ -16,9 +16,6 @@ else
 	function ENT:Think()
 		self:PhysWake()
 
-		self:ProcessDamageEvents() -- Last tick's damage
-		self:UpdateLegs()
-
 		-- Need to figure out what the idea with this is
 		-- self:CallModule("Think")
 
@@ -30,6 +27,7 @@ else
 	function ENT:PhysicsUpdate(phys)
 		self:HandleMovement(phys)
 
+		self:UpdateLegs()
 		self:UpdateBones()
 
 		self:CallModule("Tick", self:GetDriver())

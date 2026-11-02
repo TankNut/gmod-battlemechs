@@ -14,8 +14,6 @@ function ENT:InitDamageGroups()
 
 		group:Set(group.MaxHealth)
 	end
-
-	self.DamageCache = {}
 end
 
 function ENT:AddDamageGroup(name, health, bones)
@@ -23,14 +21,10 @@ function ENT:AddDamageGroup(name, health, bones)
 end
 
 if SERVER then
-	function ENT:OnTakeDamage(dmg)
-		return 0
-	end
-
 	local cvar_mult1 = GetConVar("battlemechs_hull_damage_1")
 	local cvar_mult2 = GetConVar("battlemechs_hull_damage_2")
 
-	function ENT:GetHullDamage(index, health, damage)
+	function ENT:GetHullDamage(health, damage)
 		local remaining = health - damage
 		local passthrough = 0
 
@@ -42,128 +36,57 @@ if SERVER then
 			+ math.Truncate(passthrough * cvar_mult2:GetFloat())
 	end
 
-	local cvar_debug = CreateConVar("battlemechs_debug_damage", 0, bit.bor(FCVAR_ARCHIVE, FCVAR_REPLICATED))
-
-	function ENT:TakeMechDamage(index, dmg)
-		local group = self.DamageGroups[index]
-		local damage = dmg:GetDamage()
+	function ENT:TakeGroupDamage(group, damage)
 		local health = group:Get()
-
-		local hullDamage = self:GetHullDamage(index, health, damage)
+		local spill = self:GetHullDamage(health, damage)
 		local remaining = math.max(health - damage, 0)
 
 		if remaining != health then
 			group:Set(remaining)
+
+			-- If remaining == 0 then fire hooks
 		end
 
-		if health > 0 and remaining == 0 then
-			print("Damage Group broken", group.Name)
+		return spill
+	end
+
+	function ENT:TakeHullDamage(damage)
+		if damage <= 0 then
+			return
 		end
 
-		if cvar_debug:GetBool() then
-			print(string.format("\t%s: %s -> %s (%s to hull)", group.Name, health, remaining, hullDamage))
-		end
+		local health = math.max(self:Health() - damage, 0)
 
-		if hullDamage > 0 then
-			local hull = math.max(self:Health() - hullDamage, 0)
+		self:SetHealth(health)
 
-			self:SetHealth(hull)
-
-			if hull <= 0 then
-				self:Remove()
-			end
+		if health <= 0 then
+			self:Remove()
 		end
 	end
 
-	function ENT:RegisterDamageEvent(index, dmg)
-		local bone = self.Bones[index]
+	function ENT:OnTakeDamage(dmg)
+		local hitbox = self.Hitboxes[self.LastHitbox]
 
-		-- This should be a thing, and just transmit directly to the mech itself
-		local group = assert(bone.DamageGroup, "Bone '" .. bone.Name .. "' took damage but is not tied to a damage group!")
-		local cache = self.DamageCache
+		self.LastHitbox = nil
 
-		local uid = string.format("%s-%p-%p-%p", engine.TickCount(), dmg:GetWeapon(), dmg:GetInflictor(), dmg:GetAttacker())
+		local group
 
-		if not cache[uid] then
-			cache[uid] = {
-				Attacker = dmg:GetAttacker(),
-				Inflictor = dmg:GetInflictor(),
-				Weapon = dmg:GetWeapon()
-			}
+		if hitbox then
+			local pos, ang = self:GetHitboxPosition(hitbox)
+
+			debugoverlay.SweptBox(pos, pos, hitbox.Mins, hitbox.Maxs, ang, 1, Color(255, 0, 0))
+
+			group = hitbox.Bone.DamageGroup
 		end
 
-		table.insert(cache[uid], {
-			Index = group.Index,
-			Damage = dmg:GetDamage(),
-			Type = dmg:GetDamageType()
-		})
-	end
+		local damage = dmg:GetDamage()
 
-	function ENT:ProcessDamageEvents()
-		for _, cache in pairs(self.DamageCache) do
-			local damageCount = 0
-			local damageType = 0
-
-			local totalDamage = 0
-			local baseFraction = 0
-
-			local groups = {}
-
-			for _, instance in ipairs(cache) do
-				damageType = bit.bor(damageType, instance.Type)
-				damageCount = damageCount + 1
-
-				totalDamage = totalDamage + instance.Damage
-
-				local old = groups[instance.Index] or 0
-				local new = math.max(old, instance.Damage)
-
-				baseFraction = baseFraction + (new - old)
-
-				groups[instance.Index] = new
-			end
-
-			local finalDamage = baseFraction / table.Count(groups)
-
-			if debugConvar:GetBool() then
-				print("=== Damage Event ===")
-				print("\tTick:", engine.TickCount())
-				print("\t" .. tostring(self))
-				print("\tDriver:", self:GetDriver())
-				print("\tInstances:", #cache)
-				print("\tBase Damage:", math.Truncate(totalDamage))
-				print("\tFinal Damage:", math.Truncate(finalDamage))
-				print("Source:")
-				print("\tAttacker:", cache.Attacker)
-				print("\tInflictor:", cache.Inflictor)
-				print("\tWeapon:", cache.Weapon)
-
-				print("Damage Spread:")
-			end
-
-			for index, fraction in pairs(groups) do
-				local damage = math.Truncate((fraction / baseFraction) * finalDamage)
-
-				local dmg = DamageInfo()
-				dmg:SetDamageType(damageType)
-				dmg:SetDamage(damage)
-
-				if IsValid(cache.Attacker) then
-					dmg:SetAttacker(cache.Attacker)
-				end
-
-				if IsValid(cache.Inflictor) then
-					dmg:SetInflictor(cache.Inflictor)
-				end
-
-				if IsValid(cache.Weapon) then
-					dmg:SetWeapon(cache.Weapon)
-				end
-
-				self:TakeMechDamage(index, dmg)
-			end
+		if group then
+			damage = self:TakeGroupDamage(group, damage)
 		end
 
-		table.Empty(self.DamageCache)
+		self:TakeHullDamage(damage)
+
+		return 0
 	end
 end

@@ -20,6 +20,10 @@ function ENT:ClearHitboxes()
 	end
 end
 
+function ENT:GetHitboxPosition(hitbox)
+	return LocalToWorld(hitbox.Pos, hitbox.Ang, hitbox.Bone.Pos, hitbox.Bone.Ang)
+end
+
 function ENT:AddHitbox(name, pos, ang, size)
 	local mins = Vector(0, -size.y * 0.5, -size.z * 0.5)
 	local maxs = Vector(size.x, size.y * 0.5, size.z * 0.5)
@@ -46,8 +50,10 @@ function ENT:TestHitboxes(start, delta, isbox, extends, mask)
 	local closest = math.huge
 	local hit
 
-	for _, hitbox in ipairs(self.Hitboxes) do
-		local pos, ang = LocalToWorld(hitbox.Pos, hitbox.Ang, hitbox.Bone.Pos, hitbox.Bone.Ang)
+	self.LastHitbox = nil
+
+	for k, hitbox in ipairs(self.Hitboxes) do
+		local pos, ang = self:GetHitboxPosition(hitbox)
 		local hitpos, normal, fraction = hitbox.PhysCollide:TraceBox(pos, ang, start, start + delta, min, max)
 
 		if hitpos and fraction < closest then
@@ -57,6 +63,8 @@ function ENT:TestHitboxes(start, delta, isbox, extends, mask)
 				Normal = normal,
 				Fraction = fraction
 			}
+
+			self.LastHitbox = k
 		end
 	end
 
