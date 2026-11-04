@@ -48,7 +48,7 @@ function BONE:Update()
 		if self.Offset then
 			local offset = self.Offset
 
-			self.Pos, self.Ang = LocalToWorld(offset.Pos or vector_origin, offset.Ang or angle_zero, self.Parent.Pos, self.Parent.Ang)
+			self.Pos, self.Ang = self.Parent:LocalToWorld(offset.Pos, offset.Ang)
 		else
 			self.Pos = self.Parent.Pos
 			self.Ang = self.Parent.Ang
@@ -57,12 +57,6 @@ function BONE:Update()
 
 	for _, callback in ipairs(self.Callbacks) do
 		callback(self.Mech, self)
-	end
-end
-
-function BONE:Tick()
-	if self.Turret then
-		self.Turret:Tick()
 	end
 end
 
