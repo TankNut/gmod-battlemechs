@@ -22,6 +22,15 @@ AddCSLuaFile("cl_render.lua")
 if CLIENT then
 	include("cl_render.lua")
 end
+
+function battlemechs:Assert(val, str, ...)
+	if not val then
+		error(string.format(str, ...), 2)
+	end
+
+	return val
+end
+
 function battlemechs:GetMech(ply)
 	return ply:GetNWEntity("battlemechs.mech")
 end
