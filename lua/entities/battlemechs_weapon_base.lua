@@ -113,7 +113,7 @@ function ENT:FireWeapon(ply)
 end
 
 function ENT:Tick(ply)
-	if not ply:IsValid() then
+	if CLIENT or not ply:IsValid() then
 		return
 	end
 

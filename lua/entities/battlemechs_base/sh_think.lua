@@ -7,18 +7,13 @@ if CLIENT then
 		self:UpdateLegs()
 		self:UpdateBones()
 
-		-- Need to figure out what the idea with this is
-		-- self:CallModule("Think")
+		self:TickModules()
 
 		self:UpdateHUD()
 	end
 else
 	function ENT:Think()
 		self:PhysWake()
-
-		-- Need to figure out what the idea with this is
-		-- self:CallModule("Think")
-
 		self:NextThink(CurTime())
 
 		return true
@@ -30,6 +25,6 @@ else
 		self:UpdateLegs()
 		self:UpdateBones()
 
-		self:CallModule("Tick", self:GetDriver())
+		self:TickModules()
 	end
 end

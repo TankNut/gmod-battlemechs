@@ -30,18 +30,15 @@ function ENT:AddModule(class, config)
 	end
 end
 
-function ENT:CallModule(name, ...)
+function ENT:TickModules()
+	local driver = self:GetDriver()
+
 	for _, v in ipairs(self.Modules) do
 		local ent = v.Entity
 
-		if ent:IsValid() and ent[name] then
-			ent[name](ent, ...)
+		if IsValid(ent) then
+			ent:Tick(driver)
 		end
 	end
 end
 
-function ENT:UpdateModules()
-	for _, v in ipairs(self.Modules) do
-		v.Entity:ModuleThink()
-	end
-end
