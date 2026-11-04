@@ -48,6 +48,8 @@ else
 			ply:DrawShadow(false)
 
 			mech:OnEnter(ply)
+
+			battlemechs:UpdateMechRelationships(mech)
 		end
 	end)
 
@@ -59,6 +61,8 @@ else
 
 			ply:SetNWEntity("battlemechs.mech", NULL)
 			ply:DrawShadow(true)
+
+			battlemechs:UpdateMechRelationships(mech)
 		end
 	end)
 
@@ -68,3 +72,23 @@ else
 		end
 	end)
 end
+
+hook.Add("OnEntityCreated", "battlemechs", function(ent)
+	if ent:IsNPC() then
+		battlemechs.Npcs[ent:EntIndex()] = ent
+
+		if SERVER then
+			battlemechs:UpdateNPCRelationships(ent)
+		end
+	elseif scripted_ents.IsBasedOn(ent:GetClass(), "battlemechs_base") then
+		battlemechs.Mechs[ent:EntIndex()] = ent
+	end
+end)
+
+hook.Add("EntityRemoved", "battlemechs", function(ent)
+	if ent:IsNPC() then
+		battlemechs.Npcs[ent:EntIndex()] = nil
+	elseif scripted_ents.IsBasedOn(ent:GetClass(), "battlemechs_base") then
+		battlemechs.Mechs[ent:EntIndex()] = nil
+	end
+end)

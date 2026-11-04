@@ -129,6 +129,8 @@ function ENT:Initialize()
 	self.Radius = (self.Bounds.Maxs - self.Bounds.Mins):Length() * 0.5
 	self.SoundCache = {}
 
+	self:AddFlags(FL_OBJECT)
+
 	if CLIENT then
 		self:InitParts()
 		self:SetRenderBounds(self.Bounds.Mins, self.Bounds.Maxs)
@@ -141,6 +143,8 @@ function ENT:Initialize()
 		self:SetHealth(self.BaseHealth)
 
 		self:InitMovement()
+
+		battlemechs:UpdateMechRelationships(self)
 	end
 end
 
@@ -367,4 +371,12 @@ function ENT:TestCollision(start, delta, isbox, extends, mask)
 		Normal = normal,
 		Fraction = fraction
 	}
+end
+
+if SERVER then
+	function ENT:Disposition(npc)
+		local driver = self:GetDriver()
+
+		return driver:IsValid() and npc:Disposition(driver) or D_NU, 0
+	end
 end

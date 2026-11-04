@@ -7,6 +7,8 @@ AddCSLuaFile("cl_render.lua")
 if CLIENT then
 	include("cl_render.lua")
 end
+battlemechs.Mechs = battlemechs.Mechs or {}
+battlemechs.Npcs = battlemechs.Npcs or {}
 
 include("sh_convars.lua")
 include("sh_hooks.lua")
@@ -16,6 +18,15 @@ include("meta/sh_bone.lua")
 include("meta/sh_damage_group.lua")
 include("meta/sh_turret.lua")
 
+if SERVER then
+	include("sv_npcs.lua")
+end
+
+AddCSLuaFile("cl_render.lua")
+
+if CLIENT then
+	include("cl_render.lua")
+end
 function battlemechs:GetMech(ply)
 	return ply:GetNWEntity("battlemechs.mech")
 end
