@@ -2,11 +2,6 @@ AddCSLuaFile()
 
 battlemechs = battlemechs or {}
 
-AddCSLuaFile("cl_render.lua")
-
-if CLIENT then
-	include("cl_render.lua")
-end
 battlemechs.Mechs = battlemechs.Mechs or {}
 battlemechs.Npcs = battlemechs.Npcs or {}
 

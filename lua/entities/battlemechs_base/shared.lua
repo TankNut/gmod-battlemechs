@@ -79,11 +79,14 @@ include("sh_helpers.lua")
 include("sh_hitboxes.lua")
 include("sh_ik.lua")
 include("sh_modules.lua")
-include("sh_movement.lua")
 include("sh_think.lua")
 include("sh_view.lua")
 
 include("sh_interface.lua")
+
+if SERVER then
+	include("sv_movement.lua")
+end
 
 AddCSLuaFile("cl_debug.lua")
 AddCSLuaFile("cl_hud.lua")

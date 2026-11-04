@@ -1,9 +1,3 @@
-AddCSLuaFile()
-
-if CLIENT then
-	return
-end
-
 function ENT:GetStepDown()
 	return self.Hull.Step * 2
 end
