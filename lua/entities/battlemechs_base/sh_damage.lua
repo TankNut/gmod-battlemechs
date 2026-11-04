@@ -20,6 +20,10 @@ function ENT:AddDamageGroup(name, health, bones)
 	battlemechs:DamageGroup(self, name, health, bones)
 end
 
+function ENT:GetDamageGroup(name)
+	return self.DamageMap[name]
+end
+
 if SERVER then
 	local cvar_mult1 = GetConVar("battlemechs_hull_damage_1")
 	local cvar_mult2 = GetConVar("battlemechs_hull_damage_2")
@@ -65,15 +69,9 @@ if SERVER then
 	end
 
 	function ENT:OnTakeDamage(dmg)
-		local bone = self.LastBoneHit
+		local group = self:GetDamageGroup(self.LastDamageGroup)
 
-		self.LastHitbox = nil
-
-		local group
-
-		if bone then
-			group = bone.DamageGroup
-		end
+		self.LastDamageGroup = nil
 
 		local damage = dmg:GetDamage()
 

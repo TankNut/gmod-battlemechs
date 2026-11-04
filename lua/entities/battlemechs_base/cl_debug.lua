@@ -68,7 +68,7 @@ function ENT:DebugHitboxes()
 		local bones = {}
 
 		for _, hitbox in ipairs(self.Hitboxes) do
-			bones[hitbox.Bone.Index] = true
+			bones[self:GetDamageGroup(hitbox.DamageGroup).Index] = true
 		end
 
 		local increment = 300 / table.Count(bones)
@@ -83,8 +83,8 @@ function ENT:DebugHitboxes()
 	end
 
 	for _, hitbox in ipairs(self.Hitboxes) do
-		local pos, ang = LocalToWorld(hitbox.Pos, hitbox.Ang, hitbox.Bone.Pos, hitbox.Bone.Ang)
-		local col = self.Debug_HitboxCache[hitbox.Bone.Index]
+		local pos, ang = hitbox:GetPosAng()
+		local col = self.Debug_HitboxCache[self:GetDamageGroup(hitbox.DamageGroup).Index]
 
 		drawBox(pos, ang, hitbox.Mins, hitbox.Maxs, col)
 	end

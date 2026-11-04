@@ -2,8 +2,9 @@ AddCSLuaFile()
 
 local HITBOX = battlemechs.Hitbox or {}
 
-function HITBOX:Initialize(bone, pos, ang, size)
+function HITBOX:Initialize(bone, group, pos, ang, size)
 	self.Bone = bone
+	self.DamageGroup = group
 
 	self.Pos = pos
 	self.Ang = ang
@@ -20,8 +21,14 @@ function HITBOX:Destroy()
 	end
 end
 
+function HITBOX:GetBone()
+	return self.Mech:GetBone(self.Bone)
+end
+
 function HITBOX:GetPosAng()
-	return LocalToWorld(self.Pos, self.Ang, self.Bone.Pos, self.Bone.Ang)
+	local bone = self:GetBone()
+
+	return LocalToWorld(self.Pos, self.Ang, bone.Pos, bone.Ang)
 end
 
 function HITBOX:TestCollision(start, delta, min, max)
@@ -30,8 +37,10 @@ function HITBOX:TestCollision(start, delta, min, max)
 	return self.PhysCollide:TraceBox(pos, ang, start, start + delta, min, max)
 end
 
-battlemechs.Hitbox = setmetatable(HITBOX, {__call = function(self, _, ...)
-	local instance = setmetatable({}, {__index = self})
+battlemechs.Hitbox = setmetatable(HITBOX, {__call = function(self, _, mech, ...)
+	local instance = setmetatable({
+		Mech = mech
+	}, {__index = self})
 	instance:Initialize(...)
 
 	return instance
