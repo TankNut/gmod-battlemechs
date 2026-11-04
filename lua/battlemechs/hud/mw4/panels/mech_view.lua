@@ -31,7 +31,7 @@ function PANEL:DrawMech(mech, w, h)
 		end
 
 		local health = 1
-		local damageGroup = mech.DamageMap[part.Bone]
+		local damageGroup = part.Bone.DamageGroup
 
 		if damageGroup then
 			health = math.Clamp(damageGroup:Get() / damageGroup.MaxHealth, 0, 1)
