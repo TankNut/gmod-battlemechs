@@ -12,7 +12,7 @@ function ENT:AddModelPart(mdl, bone, data)
 
 	data.Type = battlemechs.MODEL
 	data.Model = Model(mdl)
-	data.Bone = bone
+	data.Bone = battlemechs:Assert(self:GetBone(bone), "Model part '%s' references undefined bone '%s'", mdl, bone)
 
 	data.Pos = data.Pos or Vector()
 	data.Ang = data.Ang or Angle()
@@ -22,14 +22,13 @@ function ENT:AddModelPart(mdl, bone, data)
 end
 
 function ENT:AddPart(data)
-	assert(self:GetBone(data.Bone), string.format("Bone '%s' does not exist!", data.Bone))
-
 	table.insert(self.Parts, data)
 end
 
 function ENT:CreatePartEntity(part)
 	local ent = ClientsideModel(part.Model, part.RenderGroup)
 
+	-- Probably some bad behavior here combined with the retry in DrawModelPart
 	if not IsValid(ent) or ent:GetModel() == "models/error.mdl" then
 		return
 	end
@@ -69,7 +68,7 @@ function ENT:DrawModelPart(part, flags)
 
 	self:UpdatePart(part)
 
-	local bone = self:GetBone(part.Bone)
+	local bone = part.Bone
 	local pos, ang = LocalToWorld(part.Pos, part.Ang, bone.Pos, bone.Ang)
 
 	-- NaN check
