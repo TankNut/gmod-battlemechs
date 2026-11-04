@@ -122,6 +122,8 @@ function ENT:Initialize()
 	self:SetModel("models/props_lab/cactus.mdl")
 	self:DrawShadow(false)
 
+	self.Hitboxes = {}
+
 	self:InitPhysics()
 
 	self:InitBones()
@@ -353,15 +355,15 @@ end
 	which would result in the player clipping into the mech, just in a slightly different way instead
 ]]
 function ENT:TestCollision(start, delta, isbox, extends, mask)
-	if mask != MASK_PLAYERSOLID then
-		return self:TestHitboxes(start, delta, isbox, extends, mask)
-	end
-
 	local max = extends
 	local min = -extends
 
 	max.z = max.z - min.z
 	min.z = 0
+
+	if mask != MASK_PLAYERSOLID then
+		return self:TestHitboxes(start, delta, min, max)
+	end
 
 	local hitpos, normal, fraction = self.PhysCollide:TraceBox(self:GetPos(), self:GetAngles(), start, start + delta, min, max)
 

@@ -65,18 +65,14 @@ if SERVER then
 	end
 
 	function ENT:OnTakeDamage(dmg)
-		local hitbox = self.Hitboxes[self.LastHitbox]
+		local bone = self.LastBoneHit
 
 		self.LastHitbox = nil
 
 		local group
 
-		if hitbox then
-			local pos, ang = self:GetHitboxPosition(hitbox)
-
-			debugoverlay.SweptBox(pos, pos, hitbox.Mins, hitbox.Maxs, ang, 1, Color(255, 0, 0))
-
-			group = hitbox.Bone.DamageGroup
+		if bone then
+			group = bone.DamageGroup
 		end
 
 		local damage = dmg:GetDamage()

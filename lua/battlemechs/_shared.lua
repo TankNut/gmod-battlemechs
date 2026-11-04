@@ -11,6 +11,7 @@ include("sh_hud.lua")
 
 include("meta/sh_bone.lua")
 include("meta/sh_damage_group.lua")
+include("meta/sh_hitbox.lua")
 include("meta/sh_turret.lua")
 
 if SERVER then

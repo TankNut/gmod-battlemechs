@@ -2,21 +2,12 @@ AddCSLuaFile()
 
 function ENT:InitHitboxes()
 	self:ClearHitboxes()
-
-	self.Hitboxes = {}
-
 	self:BuildHitboxes()
 end
 
 function ENT:ClearHitboxes()
-	if not self.Hitboxes then
-		return
-	end
-
 	for _, hitbox in ipairs(self.Hitboxes) do
-		if IsValid(hitbox.PhysCollide) then
-			hitbox.PhysCollide:Destroy()
-		end
+		hitbox:Destroy()
 	end
 end
 
@@ -25,36 +16,19 @@ function ENT:GetHitboxPosition(hitbox)
 end
 
 function ENT:AddHitbox(name, pos, ang, size)
-	local mins = Vector(0, -size.y * 0.5, -size.z * 0.5)
-	local maxs = Vector(size.x, size.y * 0.5, size.z * 0.5)
+	local bone = battlemechs:Assert(self:GetBone(name), "Hitbox references undefined bone '%s'", name)
 
-	table.insert(self.Hitboxes, {
-		Pos = pos,
-		Ang = ang,
-
-		Bone = self:GetBone(name),
-		PhysCollide = CreatePhysCollideBox(mins, maxs),
-
-		Mins = mins,
-		Maxs = maxs
-	})
+	table.insert(self.Hitboxes, battlemechs:Hitbox(bone, pos, ang, size))
 end
 
-function ENT:TestHitboxes(start, delta, isbox, extends, mask)
-	local max = extends
-	local min = -extends
-
-	max.z = max.z - min.z
-	min.z = 0
-
+function ENT:TestHitboxes(start, delta, min, max)
 	local closest = math.huge
 	local hit
 
-	self.LastHitbox = nil
+	self.LastBoneHit = nil
 
-	for k, hitbox in ipairs(self.Hitboxes) do
-		local pos, ang = self:GetHitboxPosition(hitbox)
-		local hitpos, normal, fraction = hitbox.PhysCollide:TraceBox(pos, ang, start, start + delta, min, max)
+	for _, hitbox in ipairs(self.Hitboxes) do
+		local hitpos, normal, fraction = hitbox:TestCollision(start, delta, min, max)
 
 		if hitpos and fraction < closest then
 			closest = fraction
@@ -64,7 +38,7 @@ function ENT:TestHitboxes(start, delta, isbox, extends, mask)
 				Fraction = fraction
 			}
 
-			self.LastHitbox = k
+			self.LastBoneHit = hitbox.Bone
 		end
 	end
 
