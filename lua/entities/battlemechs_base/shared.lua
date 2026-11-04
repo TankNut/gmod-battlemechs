@@ -163,7 +163,7 @@ function ENT:SetupDataTables()
 	self:NetworkVar("Bool", "OnGround")
 
 	self:InitDamageGroups()
-	self:CreateNetworkVars()
+	self:CreateNetworkVars() -- Interface
 end
 
 function ENT:InitPhysics()
