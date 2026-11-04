@@ -1,5 +1,5 @@
 function ENT:UpdateHUD()
-	local isDriving = self:GetDriver() == LocalPlayer()
+	local isDriving = self:GetDriver() == battlemechs.lp
 	local hud, mech = battlemechs:GetHUD()
 
 	if mech and mech != self then
@@ -18,7 +18,7 @@ local block = {
 }
 
 function ENT:HUDShouldDraw(name)
-	if block[name] and self:GetDriver() == LocalPlayer() then
+	if block[name] and self:GetDriver() == battlemechs.lp then
 		return false
 	end
 end
