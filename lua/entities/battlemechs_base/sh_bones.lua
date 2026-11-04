@@ -4,17 +4,17 @@ function ENT:InitBones()
 	self.Bones = {}
 	self.BoneMap = {}
 
-	self.LastBoneThink = CurTime()
-
 	local root = self:AddBone("Root")
 	root:AddCallback(self.UpdateRootBone)
 
-	self:BuildBones(root)
+	self:BuildBones(root) -- Interface
 
+	-- Link parents
 	for _, bone in ipairs(self.Bones) do
 		bone.Parent = self:GetBone(bone.Parent)
 	end
 
+	-- Link damage groups
 	for _, group in ipairs(self.DamageGroups) do
 		for _, name in ipairs(group.Bones) do
 			local bone = self:GetBone(name)

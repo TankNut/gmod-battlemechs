@@ -4,7 +4,7 @@ function ENT:InitParts()
 	end
 
 	self.Parts = {}
-	self:BuildModel()
+	self:BuildModel() -- Interface
 end
 
 function ENT:AddModelPart(mdl, bone, data)

@@ -1,5 +1,9 @@
 AddCSLuaFile()
 
+--[[
+	Most of the functions in here are interface functions, meant to be filled out or overwritten on inherited entities.
+]]
+
 function ENT:CreateNetworkVars()
 end
 

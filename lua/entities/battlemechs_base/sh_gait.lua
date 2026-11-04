@@ -4,7 +4,7 @@ function ENT:InitLegs()
 	self.Legs = {}
 	self.LastGait = CurTime()
 
-	self:BuildLegs()
+	self:BuildLegs() -- Interface
 end
 
 function ENT:UpdateLegs()

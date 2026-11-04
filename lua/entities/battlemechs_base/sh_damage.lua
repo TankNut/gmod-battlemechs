@@ -6,7 +6,7 @@ function ENT:InitDamageGroups()
 
 	self.DamagePool = 0
 
-	self:BuildDamageGroups()
+	self:BuildDamageGroups() -- Interface
 
 	for index, group in ipairs(self.DamageGroups) do
 		group.Fraction = group.MaxHealth / self.DamagePool

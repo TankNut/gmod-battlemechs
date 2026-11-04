@@ -1,7 +1,11 @@
 AddCSLuaFile()
 
 function ENT:InitHitboxes()
-	self:ClearHitboxes()
+	if self.Hitboxes then
+		self:ClearHitboxes()
+	end
+
+	self.Hitboxes = {}
 	self:BuildHitboxes()
 end
 

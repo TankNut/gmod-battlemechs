@@ -122,8 +122,6 @@ function ENT:Initialize()
 	self:SetModel("models/props_lab/cactus.mdl")
 	self:DrawShadow(false)
 
-	self.Hitboxes = {}
-
 	self:InitPhysics()
 
 	self:InitBones()
