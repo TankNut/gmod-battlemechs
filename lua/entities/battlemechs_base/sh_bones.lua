@@ -14,6 +14,16 @@ function ENT:InitBones()
 	for _, bone in ipairs(self.Bones) do
 		bone.Parent = self:GetBone(bone.Parent)
 	end
+
+	for _, group in ipairs(self.DamageGroups) do
+		for _, name in ipairs(group.Bones) do
+			local bone = self:GetBone(name)
+
+			battlemechs:Assert(not bone.DamageGroup, "Bone '%s' is included in multiple damage groups")
+
+			bone.DamageGroup = group
+		end
+	end
 end
 
 function ENT:AddBone(name, parent)

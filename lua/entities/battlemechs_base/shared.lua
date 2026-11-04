@@ -314,7 +314,7 @@ if CLIENT then
 		if config.Bone then
 			self:UpdateBones()
 
-			local bone = self.Bones[config.Bone]
+			local bone = self:GetBone(config.Bone)
 
 			pos, ang = LocalToWorld(pos, ang, bone.Pos, bone.Ang)
 		else

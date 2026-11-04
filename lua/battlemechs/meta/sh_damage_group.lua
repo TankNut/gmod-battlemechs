@@ -13,9 +13,7 @@ function GROUP:Initialize(mech, name, health, bones)
 	mech.DamagePool = mech.DamagePool + health
 	mech:NetworkVar("Int", "DamageGroup" .. self.Index)
 
-	for _, bone in ipairs(bones) do
-		mech.DamageMap[bone] = self
-	end
+	mech.DamageMap[name] = self
 end
 
 function GROUP:Get()

@@ -12,7 +12,6 @@ function BONE:Initialize(mech, name, parent)
 	self.Pos = Vector()
 	self.Ang = Angle()
 
-	self.DamageGroup = mech.DamageMap[self.Name]
 	self.Callbacks = {}
 
 	mech.BoneMap[self.Name] = self
