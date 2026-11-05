@@ -81,11 +81,18 @@ function ENT:ApplyFriction(mv)
 	vel.y = math.Approach(vel.y, 0, (math.abs(vel.y) / ratio) * friction)
 end
 
-function ENT:GetWishSpeed(mv)
+function ENT:GetWishSpeed(mv, dir)
 	local ply = mv.Driver
 
 	if ply:IsValid() then
-		return ply:KeyDown(IN_SPEED) and self.RunSpeed or self.WalkSpeed
+		local speed = ply:KeyDown(IN_SPEED) and self.RunSpeed or self.WalkSpeed
+
+		-- There should be a better way of doing this
+		if dir.x == -1 then
+			speed = math.min(speed, self.WalkSpeed)
+		end
+
+		return speed
 	end
 
 	return 0
@@ -102,12 +109,13 @@ function ENT:GetWishVelocity(mv)
 	local back = ply:KeyDown(IN_BACK) and 1 or 0
 
 	local dir = Vector(forward - back, 0, 0)
+	local speed = self:GetWishSpeed(mv, dir)
 
 	dir:Rotate(self:GetMechAngles())
 	dir.z = 0
 	dir:Normalize()
 
-	return dir * self:GetWishSpeed(mv)
+	return dir * speed
 end
 
 function ENT:Accelerate(mv)
