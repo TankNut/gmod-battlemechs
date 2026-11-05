@@ -19,21 +19,30 @@ local function icos(a, b, c)
 end
 
 local skeleton = Color(191, 127, 255)
-local foot = Color(127, 0, 255)
+local footColor = Color(127, 0, 255)
 
 function ENT:IK_2Seg_Humanoid(leg, drawDebug)
+	local root = self:GetBone(leg.RootBone)
+	local hip = self:GetBone(leg.Hip)
+	local knee = self:GetBone(leg.Knee)
+	local foot = self:GetBone(leg.Foot)
+
 	if drawDebug then
-		render.DrawLine(leg.Hip.Pos, leg.Knee.Pos, skeleton)
+		render.DrawLine(hip.Pos, knee.Pos, skeleton)
 
-		local pos = leg.Foot.Pos + leg.Foot.Ang:Up() * leg.FootOffset
+		if foot then
+			local pos = leg.Foot.Pos + leg.Foot.Ang:Up() * leg.FootOffset
 
-		render.DrawLine(leg.Knee.Pos, pos, skeleton)
-		render.DrawLine(pos, leg.Foot.Pos, foot)
+			render.DrawLine(knee.Pos, pos, skeleton)
+			render.DrawLine(pos, foot.Pos, footColor)
+		else
+			render.DrawLine(knee.Pos, leg.Pos, skeleton)
+		end
 
 		return
 	end
 
-	local pos, ang = LocalToWorld(leg.Origin, leg.Rotation, leg.RootBone.Pos, leg.RootBone.Ang)
+	local pos, ang = LocalToWorld(leg.Origin, leg.Rotation, root.Pos, root.Ang)
 	ang.r = 0
 
 	local base = {
@@ -43,11 +52,11 @@ function ENT:IK_2Seg_Humanoid(leg, drawDebug)
 
 	local target = leg.Pos
 
-	if leg.Foot then
+	if foot then
 		local footAxis = toLocalAxis(base, leg.Normal)
-		leg.Foot.Ang = toWorldAng(base, Angle(-atan2(footAxis.z, footAxis.x) + 90, 0, atan2(footAxis.z, footAxis.y) - 90))
+		foot.Ang = toWorldAng(base, Angle(-atan2(footAxis.z, footAxis.x) + 90, 0, atan2(footAxis.z, footAxis.y) - 90))
 
-		target = target + leg.Foot.Ang:Up() * leg.FootOffset
+		target = target + foot.Ang:Up() * leg.FootOffset
 	end
 
 	local localAxis = toLocalAxis(base, target - base.Pos)
@@ -56,23 +65,23 @@ function ENT:IK_2Seg_Humanoid(leg, drawDebug)
 	localAxis = toLocalAxis(temp, target - base.Pos)
 	local distance = math.min(localAxis:Length(), leg.LengthA + leg.LengthB)
 
-	leg.Hip.Pos = LocalToWorld(leg.Origin, angle_zero, leg.RootBone.Pos, leg.RootBone.Ang)
+	hip.Pos = LocalToWorld(leg.Origin, angle_zero, root.Pos, root.Ang)
 
 	if leg.Chicken then
 		local pitch = atan2(localAxis.x, localAxis.z) + icos(distance, leg.LengthA, leg.LengthB)
 
-		leg.Hip.Ang = toWorldAng(temp, Angle(pitch - 90, 0, 0))
-		leg.Knee.Ang = toWorldAng(leg.Hip, Angle(icos(leg.LengthB, leg.LengthA, distance) + 180, 0, 0))
+		hip.Ang = toWorldAng(temp, Angle(pitch - 90, 0, 0))
+		knee.Ang = toWorldAng(hip, Angle(icos(leg.LengthB, leg.LengthA, distance) + 180, 0, 0))
 	else
 		local pitch = atan2(-localAxis.x, localAxis.z) + icos(distance, leg.LengthA, leg.LengthB)
 
-		leg.Hip.Ang = toWorldAng(temp, Angle(pitch - 90, 180, 180))
-		leg.Knee.Ang = toWorldAng(leg.Hip, Angle(icos(leg.LengthB, leg.LengthA, distance), 180, 180))
+		hip.Ang = toWorldAng(temp, Angle(pitch - 90, 180, 180))
+		knee.Ang = toWorldAng(hip, Angle(icos(leg.LengthB, leg.LengthA, distance), 180, 180))
 	end
 
-	leg.Knee.Pos = leg.Hip.Pos + leg.Hip.Ang:Forward() * leg.LengthA
+	knee.Pos = hip.Pos + hip.Ang:Forward() * leg.LengthA
 
-	if leg.Foot then
-		leg.Foot.Pos = leg.Knee.Pos + leg.Knee.Ang:Forward() * leg.LengthB + leg.Foot.Ang:Up() * -leg.FootOffset
+	if foot then
+		foot.Pos = knee.Pos + knee.Ang:Forward() * leg.LengthB + foot.Ang:Up() * -leg.FootOffset
 	end
 end
