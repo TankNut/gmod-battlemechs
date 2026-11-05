@@ -10,7 +10,7 @@ function PANEL:DrawMech(mech, w, h)
 	local x, y = self:LocalToScreen(0, 0)
 
 	local ang = battlemechs.lp:LocalEyeAngles()
-	local pos = mech:GetMechCenter() - (ang:Forward() * mech.Radius * 2.5)
+	local pos = mech:GetMechCenter() - (ang:Forward() * mech.Radius)
 
 	cam.Start({
 		x = x, y = y,

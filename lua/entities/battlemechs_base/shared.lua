@@ -62,6 +62,8 @@ ENT.Bounds = {
 	Maxs = Vector(120, 120, 120)
 }
 
+ENT.Radius = 600
+
 ENT.FootstepSound = "MW4.Footstep.Small"
 
 ENT.DrawDriver = {
@@ -129,7 +131,6 @@ function ENT:Initialize()
 	self:InitHitboxes()
 	self:InitModules()
 
-	self.Radius = (self.Bounds.Maxs - self.Bounds.Mins):Length() * 0.5
 	self.SoundCache = {}
 
 	self:AddFlags(FL_OBJECT)
@@ -282,8 +283,6 @@ function ENT:OnRemove()
 end
 
 function ENT:OnReloaded()
-	self.Radius = (self.Bounds.Maxs - self.Bounds.Mins):Length() * 0.5
-
 	self:InitPhysics()
 
 	self:InitBones()

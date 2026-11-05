@@ -12,15 +12,6 @@ function ENT:GetMechCenter()
 	return self:GetPos() + Vector(0, 0, (self.Hull.Height - self.Hull.Offset) / 2)
 end
 
-function ENT:GetMechRadius()
-
-	local x = math.max(math.abs(self.Mins.x), math.abs(self.Maxs.x))
-	local y = math.max(math.abs(self.Mins.x), math.abs(self.Maxs.x))
-	local z = math.max(math.abs(self.Mins.x), math.abs(self.Maxs.x))
-
-	return math.sqrt(x^2 + y^2 + z^2)
-end
-
 function ENT:GetMoveStat(val)
 	local scale = math.Clamp(math.Remap(self:GetMechVelocity():Length2D(), self.WalkSpeed, self.RunSpeed, 0, 1), 0, 1)
 
