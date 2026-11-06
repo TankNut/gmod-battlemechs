@@ -46,7 +46,7 @@ function ENT:GetViewOrigin()
 		if config.Bone then
 			return self:GetBone(config.Bone):LocalToWorld(config.Pos), ang
 		else
-			return self:LocalToWorld(config.Pos, ang)
+			return self:LocalToWorld(config.Pos), ang
 		end
 	end
 end
