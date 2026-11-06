@@ -153,19 +153,15 @@ function ENT:UpdateGait()
 	self:SetGaitOffset(gaitOffset)
 end
 
-local trace
 local result = {}
+local trace = {
+	mins = Vector(-16, -16, 0),
+	maxs = Vector(16, 16, 0),
+	collisiongroup = COLLISION_GROUP_PLAYER_MOVEMENT,
+	output = result
+}
 
 function ENT:FindGround(offset, maxLength)
-	if not trace then
-		trace = {
-			mins = Vector(-16, -16, 0),
-			maxs = Vector(16, 16, 0),
-			collisiongroup = COLLISION_GROUP_PLAYER_MOVEMENT,
-			output = result
-		}
-	end
-
 	trace.filter = self
 
 	trace.start = self:GetPos()
