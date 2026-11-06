@@ -153,9 +153,9 @@ if SERVER then
 			local ratio = math.max(math.abs(diff.p), math.abs(diff.y), math.abs(diff.r))
 
 			if ratio > 0 then
-				ang.p = approachAngle(ang.p, pitch, (diff.p / ratio) * self.Rate * delta, range)
-				ang.y = approachAngle(ang.y, yaw, (diff.y / ratio) * self.Rate * delta, range)
-				ang.r = approachAngle(ang.r, roll, (diff.r / ratio) * self.Rate * delta, range)
+				ang.p = approachAngle(ang.p, pitch, (diff.p / ratio) * self.Rate * delta, self.Pitch)
+				ang.y = approachAngle(ang.y, yaw, (diff.y / ratio) * self.Rate * delta, self.Yaw)
+				ang.r = approachAngle(ang.r, roll, (diff.r / ratio) * self.Rate * delta, self.Roll)
 			end
 		end
 
