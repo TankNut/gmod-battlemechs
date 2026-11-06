@@ -31,7 +31,7 @@ function ENT:IK_2Seg_Humanoid(leg, drawDebug)
 		render.DrawLine(hip.Pos, knee.Pos, skeleton)
 
 		if foot then
-			local pos = leg.Foot.Pos + leg.Foot.Ang:Up() * leg.FootOffset
+			local pos = foot.Pos + foot.Ang:Up() * leg.FootOffset
 
 			render.DrawLine(knee.Pos, pos, skeleton)
 			render.DrawLine(pos, foot.Pos, footColor)
