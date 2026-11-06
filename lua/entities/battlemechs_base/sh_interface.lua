@@ -13,11 +13,13 @@ end
 function ENT:BuildLegs()
 end
 
-function ENT:OnStepStart(index, leg) end
-function ENT:OnStepFinish(index, leg)
-	if SERVER and self.FootstepSound then
-		self:MechEmitSound(self.FootstepSound, leg.Pos + leg.Normal)
-	end
+function ENT:BuildHitboxes()
+end
+
+function ENT:BuildDamageGroups()
+end
+
+function ENT:BuildModules()
 end
 
 if CLIENT then
@@ -26,13 +28,11 @@ if CLIENT then
 
 	function ENT:UpdatePart(part)
 	end
-else
-	function ENT:BuildHitboxes()
-	end
-
-	function ENT:BuildDamageGroups()
-	end
 end
 
-function ENT:BuildModules()
+function ENT:OnStepStart(index, leg) end
+function ENT:OnStepFinish(index, leg)
+	if SERVER and self.FootstepSound then
+		self:MechEmitSound(self.FootstepSound, leg.Pos + leg.Normal)
+	end
 end
