@@ -4,7 +4,7 @@ function ENT:BuildLegs()
 	self:AddLeg({
 		Timing = 0,
 
-		RootBone = self:GetBone("Root"),
+		RootBone = "Root",
 		Rotation = Angle(0, 0, 0),
 
 		Origin = battlemechs.MW4Scale(0, 1.45, 0),
@@ -14,9 +14,9 @@ function ENT:BuildLegs()
 		Solver = self.IK_2Seg_Humanoid,
 		Chicken = true,
 
-		Hip = self:GetBone("LHip"),
-		Knee = self:GetBone("LKnee"),
-		Foot = self:GetBone("LFoot"),
+		Hip = "LHip",
+		Knee = "LKnee",
+		Foot = "LFoot",
 
 		LengthA = self.UpperLength,
 		LengthB = self.LowerLength,
@@ -26,7 +26,7 @@ function ENT:BuildLegs()
 	self:AddLeg({
 		Timing = 0.5,
 
-		RootBone = self:GetBone("Root"),
+		RootBone = "Root",
 		Rotation = Angle(0, 0, 0),
 
 		Origin = battlemechs.MW4Scale(0, -1.45, 0),
@@ -36,9 +36,9 @@ function ENT:BuildLegs()
 		Solver = self.IK_2Seg_Humanoid,
 		Chicken = true,
 
-		Hip = self:GetBone("RHip"),
-		Knee = self:GetBone("RKnee"),
-		Foot = self:GetBone("RFoot"),
+		Hip = "RHip",
+		Knee = "RKnee",
+		Foot = "RFoot",
 
 		LengthA = self.UpperLength,
 		LengthB = self.LowerLength,

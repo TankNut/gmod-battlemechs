@@ -4,7 +4,6 @@ function ENT:BuildBones(root)
 	-- Body
 	local torso = root:AddBone("Torso")
 	torso:SetOffset(Vector(0, 0, 13))
-
 	torso:MakeTurret("TorsoAngle", function(turret)
 		turret:SetRate(108)
 		turret:LockPitch(true)

@@ -2,47 +2,30 @@ AddCSLuaFile()
 
 function ENT:BuildBones(root)
 	-- Body
-	self:AddBone("Torso", {
-		Parent = "Root",
-		Offset = {
-			Pos = battlemechs.MW4Scale(-0.22, 0, 0.67)
-		},
-		Turret = {
-			NetworkVar = "TorsoAngle",
-			Pitch = {-30, 30},
-			Yaw = {-130, 130},
-			Rate = 225,
+	local torso = root:AddBone("Torso")
+	torso:SetOffset(battlemechs.MW4Scale(-0.22, 0, 0.67))
+	torso:MakeTurret("TorsoAngle", function(turret)
+		turret:SetYaw(-130, 130)
 
-			NoPitch = true,
-			Torso = true
-		}
-	})
+		turret:SetRate(225)
+		turret:LockPitch(true)
+	end)
 
-	self:AddBone("LeftWeapon", {
-		Parent = "Torso",
-		Offset = {
-			Pos = battlemechs.MW4Scale(0.17, 2, 0.51)
-		},
-		Turret = {
-			NetworkVar = "LeftWeaponAngle",
-			Pitch = {-90, 90},
-			Yaw = {-15, 30},
-			Rate = 108,
-		}
-	})
+	local leftWeapon = torso:AddBone("LeftWeapon")
+	leftWeapon:SetOffset(battlemechs.MW4Scale(0.17, 2, 0.51))
+	leftWeapon:MakeTurret("LeftWeaponAngle", function(turret)
+		turret:SetYaw(-15, 30)
 
-	self:AddBone("RightWeapon", {
-		Parent = "Torso",
-		Offset = {
-			Pos = battlemechs.MW4Scale(0.17, -2, 0.51)
-		},
-		Turret = {
-			NetworkVar = "RightWeaponAngle",
-			Pitch = {-90, 90},
-			Yaw = {-30, 15},
-			Rate = 108
-		}
-	})
+		turret:SetRate(108)
+	end)
+
+	local rightWeapon = torso:AddBone("RightWeapon")
+	rightWeapon:SetOffset(battlemechs.MW4Scale(0.17, -2, 0.51))
+	rightWeapon:MakeTurret("RightWeaponAngle", function(turret)
+		turret:SetYaw(-30, 15)
+
+		turret:SetRate(108)
+	end)
 
 	-- Left leg
 	self:AddBone("LHip")

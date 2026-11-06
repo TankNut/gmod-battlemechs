@@ -10,12 +10,12 @@ ENT.Author = "TankNut"
 ENT.Spawnable = true
 
 -- Movement related fields
-ENT.Hull = {-- The size of the mech's collision hull, this is only used for movement. Keep it off the ground so it doesn't catch on any bumps
-	Mins = Vector(-48, -48, -16),
-	Maxs = Vector(48, 48, 55)
+ENT.Hull = {
+	Size = 48, -- Length and Width
+	Height = 55, -- Height above the entity origin
+	Offset = 110, -- How far above the ground the mech sits
+	Step = 80 -- How far the bottom of the hull sits from the ground, enables stepping over objects
 }
-
-ENT.GroundOffset = 110 -- How far above the ground the mech sits
 
 ENT.MoveAcceleration = 200 -- Hammer units/s of acceleration when moving or slowing down
 ENT.MaxSlope = 40 -- The steepest slope a mech can walk on, any steeper and it'll start sliding down

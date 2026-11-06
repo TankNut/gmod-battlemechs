@@ -52,7 +52,6 @@ ENT.BaseHealth = 6000
 ENT.FootstepSound = "MW4.Footstep.Large"
 
 -- Custom fields
-
 ENT.UpperLength = 60
 ENT.LowerLength = 68
 
