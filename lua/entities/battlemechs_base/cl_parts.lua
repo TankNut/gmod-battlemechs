@@ -12,7 +12,7 @@ function ENT:AddModelPart(mdl, bone, data)
 
 	data.Type = battlemechs.MODEL
 	data.Model = Model(mdl)
-	data.Bone = battlemechs:Assert(self:GetBone(bone), "Model part '%s' references undefined bone '%s'", mdl, bone)
+	data.Bone = battlemechs.Assert(self:GetBone(bone), "Model part '%s' references undefined bone '%s'", mdl, bone)
 
 	data.Pos = data.Pos or Vector()
 	data.Ang = data.Ang or Angle()

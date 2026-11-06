@@ -37,7 +37,7 @@ function HITBOX:TestCollision(start, delta, min, max)
 	return self.PhysCollide:TraceBox(pos, ang, start, start + delta, min, max)
 end
 
-battlemechs.Hitbox = setmetatable(HITBOX, {__call = function(self, _, mech, ...)
+battlemechs.Hitbox = setmetatable(HITBOX, {__call = function(self, mech, ...)
 	local instance = setmetatable({
 		Mech = mech
 	}, {__index = self})

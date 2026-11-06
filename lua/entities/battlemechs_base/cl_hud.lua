@@ -1,15 +1,15 @@
 function ENT:UpdateHUD()
 	local isDriving = self:GetDriver() == battlemechs.lp
-	local hud, mech = battlemechs:GetHUD()
+	local hud, mech = battlemechs.GetHUD()
 
 	if mech and mech != self then
 		return
 	end
 
 	if isDriving and not hud then
-		battlemechs:CreateHUD(self, "mw4")
+		battlemechs.CreateHUD(self, "mw4")
 	elseif not isDriving and hud then
-		battlemechs:DestroyHUD()
+		battlemechs.DestroyHUD()
 	end
 end
 

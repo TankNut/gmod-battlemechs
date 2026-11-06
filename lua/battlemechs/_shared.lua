@@ -1,9 +1,9 @@
 AddCSLuaFile()
 
-battlemechs = battlemechs or {}
+module("battlemechs", package.seeall)
 
-battlemechs.Mechs = battlemechs.Mechs or {}
-battlemechs.Npcs = battlemechs.Npcs or {}
+Mechs = Mechs or {}
+Npcs = Npcs or {}
 
 include("sh_convars.lua")
 include("sh_hooks.lua")
@@ -24,7 +24,7 @@ if CLIENT then
 	include("cl_render.lua")
 end
 
-function battlemechs:Assert(val, str, ...)
+function Assert(val, str, ...)
 	if not val then
 		error(string.format(str, ...), 2)
 	end
@@ -32,19 +32,19 @@ function battlemechs:Assert(val, str, ...)
 	return val
 end
 
-function battlemechs:GetMech(ply)
+function GetMech(ply)
 	return ply:GetNWEntity("battlemechs.mech")
 end
 
-function battlemechs:MW4Scale(x, y, z)
+function MW4Scale(x, y, z)
 	return Vector(x * 25, y * 25, z * 25)
 end
 
 if CLIENT then
-	battlemechs.MODEL = 1
+	MODEL = 1
 
 	hook.Add("InitPostEntity", "battlemechs", function()
-		battlemechs.lp = LocalPlayer()
+		lp = LocalPlayer()
 	end)
 end
 

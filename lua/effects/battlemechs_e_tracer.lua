@@ -31,5 +31,5 @@ function EFFECT:Render()
 	render.SetMaterial(self.Material)
 
 	self.Time = self.Time + FrameTime()
-	self.Active = battlemechs:DrawTracer(self.Start, self.End, self.Velocity, self.Length, self.Scale, self.Time, self.Color)
+	self.Active = battlemechs.DrawTracer(self.Start, self.End, self.Velocity, self.Length, self.Scale, self.Time, self.Color)
 end

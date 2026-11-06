@@ -18,7 +18,7 @@ end
 function ENT:AddBone(name, parent)
 	assert(not self.BoneMap[name], string.format("A bone with the name '%s' already exists!", name))
 
-	return battlemechs:Bone(self, name, parent)
+	return battlemechs.Bone(self, name, parent)
 end
 
 function ENT:UpdateRootBone(bone)

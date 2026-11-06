@@ -1,4 +1,6 @@
-function battlemechs:DrawWorldText(pos, text, noz)
+module("battlemechs", package.seeall)
+
+function DrawWorldText(pos, text, noz)
 	local screen = pos:ToScreen()
 
 	if not screen.visible then
@@ -22,7 +24,7 @@ end
 local tracerColor = Color(255, 255, 255)
 
 -- Returns false if done rendering
-function battlemechs:DrawTracer(startpos, endpos, velocity, length, scale, time, color)
+function DrawTracer(startpos, endpos, velocity, length, scale, time, color)
 	local dir = endpos - startpos
 	local distance = dir:Length()
 	dir:Normalize()

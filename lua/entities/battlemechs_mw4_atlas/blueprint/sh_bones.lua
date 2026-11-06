@@ -5,7 +5,7 @@ function ENT:BuildBones(root)
 	self:AddBone("Torso", {
 		Parent = "Root",
 		Offset = {
-			Pos = battlemechs:MW4Scale(0, 0, 1.3)
+			Pos = battlemechs.MW4Scale(0, 0, 1.3)
 		},
 		Turret = {
 			NetworkVar = "TorsoAngle",
@@ -22,14 +22,14 @@ function ENT:BuildBones(root)
 	self:AddBone("LeftArm", {
 		Parent = "Torso",
 		Offset = {
-			Pos = battlemechs:MW4Scale(-0.5, 2, 2.65)
+			Pos = battlemechs.MW4Scale(-0.5, 2, 2.65)
 		},
 	})
 
 	self:AddBone("LeftWeapon", {
 		Parent = "LeftArm",
 		Offset = {
-			Pos = battlemechs:MW4Scale(-0.55, 1.3, -2.55)
+			Pos = battlemechs.MW4Scale(-0.55, 1.3, -2.55)
 		},
 	})
 
@@ -38,14 +38,14 @@ function ENT:BuildBones(root)
 	self:AddBone("RightArm", {
 		Parent = "Torso",
 		Offset = {
-			Pos = battlemechs:MW4Scale(-0.5, -2, 2.65)
+			Pos = battlemechs.MW4Scale(-0.5, -2, 2.65)
 		},
 	})
 
 	self:AddBone("RightWeapon", {
 		Parent = "RightArm",
 		Offset = {
-			Pos = battlemechs:MW4Scale(-0.55, -1.3, -2.55)
+			Pos = battlemechs.MW4Scale(-0.55, -1.3, -2.55)
 		},
 	})
 

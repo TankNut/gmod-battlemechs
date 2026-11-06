@@ -32,7 +32,7 @@ function GROUP:IsBroken()
 	return self:Get() <= 0
 end
 
-battlemechs.DamageGroup = setmetatable(GROUP, {__call = function(self, _, ...)
+battlemechs.DamageGroup = setmetatable(GROUP, {__call = function(self, ...)
 	local instance = setmetatable({}, {__index = self})
 	instance:Initialize(...)
 

@@ -59,7 +59,7 @@ function ENT:DebugBones()
 		render.DrawLine(bone.Pos, bone.Pos + bone.Ang:Right() * 10, right)
 		render.DrawLine(bone.Pos, bone.Pos + bone.Ang:Up() * 10, up)
 
-		battlemechs:DrawWorldText(bone.Pos, bone.Name, true)
+		battlemechs.DrawWorldText(bone.Pos, bone.Name, true)
 	end
 end
 

@@ -148,7 +148,7 @@ function ENT:Initialize()
 
 		self:InitMovement()
 
-		battlemechs:UpdateMechRelationships(self)
+		battlemechs.UpdateMechRelationships(self)
 	end
 end
 
@@ -274,7 +274,7 @@ function ENT:OnRemove()
 
 	if CLIENT then
 		self:ClearParts()
-		battlemechs:DestroyHUD(self)
+		battlemechs.DestroyHUD(self)
 	end
 
 	for snd in pairs(self.SoundCache) do
@@ -293,7 +293,7 @@ function ENT:OnReloaded()
 		self.Debug_HitboxCache = nil
 
 		self:InitParts()
-		battlemechs:DestroyHUD(self)
+		battlemechs.DestroyHUD(self)
 	end
 end
 
@@ -309,13 +309,11 @@ if CLIENT then
 		local ang = config.Ang
 
 		if config.Bone then
-			self:UpdateBones()
-
 			local bone = self:GetBone(config.Bone)
 
 			pos, ang = LocalToWorld(pos, ang, bone.Pos, bone.Ang)
 		else
-			pos, ang = LocalToWorld(pos, ang, self:GetPos(), self:GetAngles())
+			pos, ang = LocalToWorld(pos, ang, self:GetPos(), self:GetMechAngles())
 		end
 
 		ply:SetPos(pos)

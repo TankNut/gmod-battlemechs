@@ -17,7 +17,7 @@ function ENT:InitDamageGroups()
 end
 
 function ENT:AddDamageGroup(name, health, bones)
-	battlemechs:DamageGroup(self, name, health, bones)
+	battlemechs.DamageGroup(self, name, health, bones)
 end
 
 function ENT:GetDamageGroup(name)

@@ -163,7 +163,7 @@ if SERVER then
 	end
 end
 
-battlemechs.Turret = setmetatable(TURRET, {__call = function(self, _, ...)
+battlemechs.Turret = setmetatable(TURRET, {__call = function(self, ...)
 	local instance = setmetatable({}, {__index = self})
 	instance:Initialize(...)
 

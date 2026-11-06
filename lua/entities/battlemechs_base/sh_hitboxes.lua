@@ -20,7 +20,7 @@ function ENT:GetHitboxPosition(hitbox)
 end
 
 function ENT:AddHitbox(name, group, pos, ang, size)
-	table.insert(self.Hitboxes, battlemechs:Hitbox(self, name, group, pos, ang, size))
+	table.insert(self.Hitboxes, battlemechs.Hitbox(self, name, group, pos, ang, size))
 end
 
 function ENT:TestHitboxes(start, delta, min, max)

@@ -1,5 +1,7 @@
 AddCSLuaFile()
 
+module("battlemechs", package.seeall)
+
 local function recursiveAddFile(path)
 	local files, folders = file.Find(path .. "*", "LUA")
 
@@ -26,34 +28,34 @@ if SERVER then
 	return
 end
 
-function battlemechs:GetHUD()
-	return self.ActiveHUD, self.ActiveMech
+function GetHUD()
+	return ActiveHUD, ActiveMech
 end
 
-function battlemechs:CreateHUD(mech, name)
-	if self.ActiveHUD then
-		self:DestroyHUD()
+function CreateHUD(mech, name)
+	if ActiveHUD then
+		DestroyHUD()
 	end
 
-	self.ActiveHUD = self.HUDList[name]
-	self.ActiveMech = mech
+	ActiveHUD = HUDList[name]
+	ActiveMech = mech
 
-	if self.ActiveHUD then
-		self.ActiveHUD:Init(mech)
+	if ActiveHUD then
+		ActiveHUD:Init(mech)
 	end
 end
 
-function battlemechs:DestroyHUD(mech)
-	if not self.ActiveHUD or (mech and self.ActiveMech != mech) then
+function DestroyHUD(mech)
+	if not ActiveHUD or (mech and ActiveMech != mech) then
 		return
 	end
 
-	self.ActiveHUD:Destroy()
+	ActiveHUD:Destroy()
 
-	self.ActiveHUD = nil
-	self.ActiveMech = nil
+	ActiveHUD = nil
+	ActiveMech = nil
 end
 
-battlemechs.HUDList = battlemechs.HUDList or {}
+HUDList = HUDList or {}
 
 include("hud/mw4/hud.lua")

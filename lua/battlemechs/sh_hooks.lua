@@ -1,8 +1,10 @@
 AddCSLuaFile()
 
-function battlemechs:Hook(name)
+module("battlemechs", package.seeall)
+
+function Hook(name)
 	hook.Add(name, "battlemechs", function(ply, ...)
-		local mech = self:GetMech(ply)
+		local mech = GetMech(ply)
 
 		if not mech:IsValid() or not mech[name] then
 			return
@@ -12,18 +14,18 @@ function battlemechs:Hook(name)
 	end)
 end
 
-battlemechs:Hook("PlayerButtonDown")
-battlemechs:Hook("PlayerButtonUp")
-battlemechs:Hook("PlayerPostThink")
+Hook("PlayerButtonDown")
+Hook("PlayerButtonUp")
+Hook("PlayerPostThink")
 
 if CLIENT then
-	function battlemechs:HookLocal(name)
+	function HookLocal(name)
 		hook.Add(name, "battlemechs", function(...)
-			if not self.lp then
+			if not lp then
 				return
 			end
 
-			local mech = self:GetMech(self.lp)
+			local mech = GetMech(lp)
 
 			if not mech:IsValid() or not mech[name] then
 				return
@@ -33,12 +35,12 @@ if CLIENT then
 		end)
 	end
 
-	battlemechs:Hook("CalcView")
-	battlemechs:Hook("PrePlayerDraw")
-	battlemechs:Hook("PostPlayerDraw")
+	Hook("CalcView")
+	Hook("PrePlayerDraw")
+	Hook("PostPlayerDraw")
 
-	battlemechs:HookLocal("HUDPaint")
-	battlemechs:HookLocal("HUDShouldDraw")
+	HookLocal("HUDPaint")
+	HookLocal("HUDShouldDraw")
 else
 	hook.Add("PlayerEnteredVehicle", "battlemechs", function(ply, vehicle)
 		local mech = vehicle._battlemech
@@ -49,7 +51,7 @@ else
 
 			mech:OnEnter(ply)
 
-			battlemechs:UpdateMechRelationships(mech)
+			UpdateMechRelationships(mech)
 		end
 	end)
 
@@ -62,12 +64,12 @@ else
 			ply:SetNWEntity("battlemechs.mech", NULL)
 			ply:DrawShadow(true)
 
-			battlemechs:UpdateMechRelationships(mech)
+			UpdateMechRelationships(mech)
 		end
 	end)
 
 	hook.Add("PlayerShouldTakeDamage", "battlemechs", function(ply)
-		if battlemechs:GetMech(ply):IsValid() then
+		if GetMech(ply):IsValid() then
 			return false
 		end
 	end)
@@ -75,20 +77,20 @@ end
 
 hook.Add("OnEntityCreated", "battlemechs", function(ent)
 	if ent:IsNPC() then
-		battlemechs.Npcs[ent:EntIndex()] = ent
+		Npcs[ent:EntIndex()] = ent
 
 		if SERVER then
-			battlemechs:UpdateNPCRelationships(ent)
+			battlemechs.UpdateNPCRelationships(ent)
 		end
 	elseif scripted_ents.IsBasedOn(ent:GetClass(), "battlemechs_base") then
-		battlemechs.Mechs[ent:EntIndex()] = ent
+		Mechs[ent:EntIndex()] = ent
 	end
 end)
 
 hook.Add("EntityRemoved", "battlemechs", function(ent)
 	if ent:IsNPC() then
-		battlemechs.Npcs[ent:EntIndex()] = nil
+		Npcs[ent:EntIndex()] = nil
 	elseif scripted_ents.IsBasedOn(ent:GetClass(), "battlemechs_base") then
-		battlemechs.Mechs[ent:EntIndex()] = nil
+		Mechs[ent:EntIndex()] = nil
 	end
 end)

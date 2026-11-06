@@ -26,7 +26,7 @@ function BONE:AddCallback(callback)
 end
 
 function BONE:MakeTurret(var, callback, noDebug)
-	self.Turret = battlemechs:Turret(self, var, noDebug)
+	self.Turret = battlemechs.Turret(self, var, noDebug)
 
 	callback(self.Turret)
 end
@@ -59,7 +59,7 @@ function BONE:Update()
 	end
 end
 
-battlemechs.Bone = setmetatable(BONE, {__call = function(self, _, ...)
+battlemechs.Bone = setmetatable(BONE, {__call = function(self, ...)
 	local instance = setmetatable({}, {__index = self})
 	instance:Initialize(...)
 
