@@ -127,8 +127,8 @@ function ENT:Initialize()
 	self:InitPhysics()
 
 	self:InitBones()
-	self:InitLegs()
 	self:InitHitboxes()
+	self:InitLegs()
 	self:InitModules()
 
 	self.SoundCache = {}
