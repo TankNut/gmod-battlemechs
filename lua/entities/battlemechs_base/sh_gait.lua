@@ -161,11 +161,12 @@ function ENT:FindGround(offset, maxLength)
 		trace = {
 			mins = Vector(-16, -16, 0),
 			maxs = Vector(16, 16, 0),
-			filter = function(ent) return ent != self and ent:GetOwner() != self end,
 			collisiongroup = COLLISION_GROUP_PLAYER_MOVEMENT,
 			output = result
 		}
 	end
+
+	trace.filter = self
 
 	trace.start = self:GetPos()
 	trace.endpos = offset
