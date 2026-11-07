@@ -90,7 +90,7 @@ function ENT:DebugHitboxes()
 	end
 
 	for _, hitbox in ipairs(self.Hitboxes) do
-		local pos, ang = hitbox:GetPosAng()
+		local pos, ang = hitbox:GetTransform()
 		local index = -1
 		local group = self:GetDamageGroup(hitbox.DamageGroup)
 

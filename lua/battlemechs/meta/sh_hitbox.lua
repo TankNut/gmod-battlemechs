@@ -25,14 +25,14 @@ function HITBOX:GetBone()
 	return self.Mech:GetBone(self.Bone)
 end
 
-function HITBOX:GetPosAng()
+function HITBOX:GetTransform()
 	local bone = self:GetBone()
 
 	return LocalToWorld(self.Pos, self.Ang, bone.Pos, bone.Ang)
 end
 
 function HITBOX:TestCollision(start, delta, min, max)
-	local pos, ang = self:GetPosAng()
+	local pos, ang = self:GetTransform()
 
 	return self.PhysCollide:TraceBox(pos, ang, start, start + delta, min, max)
 end
