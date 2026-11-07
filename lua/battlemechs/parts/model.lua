@@ -17,32 +17,33 @@ end
 
 function PART:SetModel(mdl)
 	self.Model = mdl
-	self.Bad = nil -- Reset bad model flag
 	self:CreateEntity()
 end
 
+-- Returns false if we don't have a valid entity
 function PART:CreateEntity()
 	-- Remove the old entity if any exists
 	if self.Entity:IsValid() then self.Entity:Remove() end
 
 	self.Entity = ClientsideModel(self.Model) or NULL
-	self.Entity:SetNoDraw(true)
+	self._Broken = not self.Entity:IsValid() or self.Entity:GetModel() == "models/error.mdl"
 
-	if not self.Entity:IsValid() then
-		self.Bad = true
-	elseif self.Entity:GetModel() == "models/error.mdl" then
-		self.Bad = true
-		self.Entity:Remove()
+	if self._Broken then
+		SafeRemoveEntity(self.Entity)
+	else
+		self.Entity:SetNoDraw(true)
 	end
 
-	return self.Bad
+	return not self._Broken
 end
 
+-- Returns false if we don't have a valid entity
 function PART:CheckEntity()
-	if self.Bad then
+	if self._Broken then
 		return false
 	end
 
+	-- Fullupdate might have deleted the entity, we're not broken so try to recreate it
 	if not self.Entity:IsValid() then
 		return self:CreateEntity()
 	end
@@ -57,6 +58,7 @@ function PART:Destroy()
 end
 
 function PART:UpdateMaterials()
+	-- GetMaterials doesn't update on clientside models, track this differently
 	if self.Entity:GetMaterial() != self.Material then
 		self.Entity:SetMaterial(self.Material)
 	end
@@ -90,7 +92,7 @@ function PART:GetRenderBounds()
 end
 
 function PART:ShouldDraw()
-	if self.Bad then return false end
+	if self._Broken then return false end
 
 	return BaseClass.ShouldDraw(self)
 end
