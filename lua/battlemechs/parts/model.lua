@@ -26,6 +26,7 @@ function PART:CreateEntity()
 	if self.Entity:IsValid() then self.Entity:Remove() end
 
 	self.Entity = ClientsideModel(self.Model) or NULL
+	self.Entity:SetNoDraw(true)
 
 	if not self.Entity:IsValid() then
 		self.Bad = true
