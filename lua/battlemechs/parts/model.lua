@@ -3,8 +3,6 @@ module("battlemechs", package.seeall)
 local PART = CreateMetaTable("ModelPart", "BasePart")
 local BaseClass = Meta.BasePart
 
-PART.IsModelPart = true
-
 function PART:Initialize(data)
 	self.Entity = NULL
 	self.Model = "models/error.mdl"
