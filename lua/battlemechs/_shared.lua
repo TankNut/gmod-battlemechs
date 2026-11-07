@@ -5,24 +5,27 @@ module("battlemechs", package.seeall)
 Mechs = Mechs or {}
 Npcs = Npcs or {}
 
-include("sh_convars.lua")
-include("sh_hooks.lua")
-include("sh_hud.lua")
+local function shared(path) AddCSLuaFile(path) include(path) end
+local function client(path) if CLIENT then include(path) else AddCSLuaFile(path) end end
+local function server(path) if SERVER then include(path) end end
 
-include("meta/sh_bone.lua")
-include("meta/sh_damage_group.lua")
-include("meta/sh_hitbox.lua")
-include("meta/sh_turret.lua")
 
-if SERVER then
-	include("sv_npcs.lua")
+
+
 end
 
-AddCSLuaFile("cl_render.lua")
+shared("sh_convars.lua")
+shared("sh_hooks.lua")
+shared("sh_hud.lua")
 
-if CLIENT then
-	include("cl_render.lua")
-end
+shared("meta/sh_bone.lua")
+shared("meta/sh_damage_group.lua")
+shared("meta/sh_hitbox.lua")
+shared("meta/sh_turret.lua")
+
+client("cl_render.lua")
+
+server("sv_npcs.lua")
 
 function Assert(val, str, ...)
 	if not val then
