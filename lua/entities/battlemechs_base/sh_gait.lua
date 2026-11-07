@@ -23,10 +23,22 @@ local function clampVector2D(vel, length)
 end
 
 function ENT:UpdateGait()
-	local delta = CurTime() - self.LastGait
-	self.LastGait = CurTime()
-
+	local delta = FrameTime()
 	local vel = self:GetMechVelocity()
+
+
+	local ply = self:GetDriver()
+
+	-- This is a very hacky thing atm but it works and makes things look better when turning
+	if ply:IsValid() and ply:KeyDown(IN_MOVELEFT + IN_MOVERIGHT) then
+		local offset = 0
+
+		for _, leg in ipairs(self.Legs) do
+			offset = math.max(offset, leg.Offset:Length())
+		end
+
+		vel:Add(vel:GetNormalized() * offset * self.TurnRate * delta)
+	end
 
 	local length = self:GetMoveStat(self.Stance)
 	local stepSize = self:GetMoveStat(self.StepSize)
