@@ -1,11 +1,11 @@
 AddCSLuaFile()
 
 function ENT:MechToWorld(pos, ang)
-	return LocalToWorld(pos, ang or angle_zero, self:GetPos(), self:GetMechAngles())
+	return LocalToWorld(pos or vector_origin, ang or angle_zero, self:GetPos(), self:GetMechAngles())
 end
 
 function ENT:WorldToMech(pos, ang)
-	return WorldToLocal(pos, ang or angle_zero, self:GetPos(), self:GetMechAngles())
+	return WorldToLocal(pos or vector_origin, ang or angle_zero, self:GetPos(), self:GetMechAngles())
 end
 
 function ENT:GetMechCenter()
