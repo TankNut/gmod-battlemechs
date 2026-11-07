@@ -22,6 +22,9 @@ shared("meta/sh_turret.lua")
 
 client("cl_render.lua")
 
+client("parts/base.lua")
+client("parts/model.lua")
+
 server("sv_npcs.lua")
 
 function Assert(val, str, ...)

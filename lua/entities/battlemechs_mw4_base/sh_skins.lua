@@ -17,7 +17,7 @@ local function addSkin(category, name)
 	return tab
 end
 
-ENT.Skins = {
+ENT.SkinData = {
 	addSkin(nil, "None"),
 
 	addSkin("Ops", "Blue"),
@@ -88,35 +88,37 @@ function ENT:CanProperty(ply, prop)
 end
 
 if CLIENT then
-	function ENT:UpdatePart(part)
-		if part.Type != battlemechs.MODEL or part.NoSkin then
-			return
-		end
-
-		local ent = part.Entity
-
-		if not IsValid(ent) then
-			return
-		end
-
-		local index = ent.SkinIndex or 0
+	function ENT:UpdatePartSkin(part)
+		local index = part.SkinIndex or 0
 		local target = self:GetSkinIndex()
 
 		if index != target then
-			local skinData = self.Skins[target + 1]
+			local skinData = self.SkinData[target + 1]
 
-			if target == 0 then
-				ent:SetMaterial("")
+			if target == 0 or not skinData then
+				part.Material = ""
 			else
-				local family = string.match(ent:GetModel(), "^models/battlemechs/mw4/(%a+)/")
+				local family = string.match(part.Model, "^models/battlemechs/mw4/(%a+)/")
 
 				if family then
-					ent:SetMaterial(string.format("models/battlemechs/mw4/%s/%s", family, skinData.Material))
+					part.Material = string.format("models/battlemechs/mw4/%s/%s", family, skinData.Material)
 				end
 			end
 
-			ent.SkinIndex = target
+			part.SkinIndex = target
 		end
+	end
+
+	function ENT:UpdateParts()
+		for _, part in ipairs(self.Parts) do
+			if not part:IsBasedOn("ModelPart") or not part:ShouldDraw() or part.NoSkin then
+				continue
+			end
+
+			self:UpdatePartSkin(part)
+		end
+
+		BaseClass.UpdateParts(self)
 	end
 end
 
@@ -130,7 +132,7 @@ properties.Add("battlemechs_mw4_skin", {
 		if not scripted_ents.IsBasedOn(ent:GetClass(), "battlemechs_mw4_base") then return false end
 		if not hook.Run("CanProperty", ply, "battlemechs_mw4_skin", ent) then return false end
 
-		return #ent.Skins > 0
+		return #ent.SkinData > 0
 	end,
 
 	MenuOpen = function(self, option, ent, tr)
@@ -140,7 +142,7 @@ properties.Add("battlemechs_mw4_skin", {
 
 		local current = ent:GetSkinIndex()
 
-		for k, v in ipairs(ent.Skins) do
+		for k, v in ipairs(ent.SkinData) do
 			local index = k - 1
 			local target = submenu
 
@@ -191,6 +193,6 @@ properties.Add("battlemechs_mw4_skin", {
 		if not properties.CanBeTargeted(ent, ply) then return end
 		if not self:Filter(ent, ply) then return end
 
-		ent:SetSkinIndex(index)
+		ent:SetSkinIndex(math.Clamp(index, 0, #ent.SkinData - 1))
 	end
 })

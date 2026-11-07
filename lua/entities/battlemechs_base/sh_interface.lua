@@ -25,9 +25,6 @@ end
 if CLIENT then
 	function ENT:BuildModel()
 	end
-
-	function ENT:UpdatePart(part)
-	end
 end
 
 function ENT:OnStepStart(index, leg) end

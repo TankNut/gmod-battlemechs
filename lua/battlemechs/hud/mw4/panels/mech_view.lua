@@ -26,7 +26,7 @@ function PANEL:DrawMech(mech, w, h)
 	render.CullMode(MATERIAL_CULLMODE_NONE)
 
 	for _, part in ipairs(mech.Parts) do
-		if part.Type != battlemechs.MODEL or part.RenderGroup == RENDERGROUP_TRANSLUCENT then
+		if not part:IsBasedOn("ModelPart") or not part:ShouldDraw() or part.NoHud then
 			continue
 		end
 
@@ -48,7 +48,7 @@ function PANEL:DrawMech(mech, w, h)
 			render.ModelMaterialOverride(base)
 			render.SetColorModulation(HSVToColor(hue, sat, val):ToVector():Unpack())
 
-			mech:DrawModelPart(part, STUDIO_RENDER)
+			part:Draw(STUDIO_RENDER, RENDERGROUP_OPAQUE)
 		end
 
 		do
@@ -58,7 +58,7 @@ function PANEL:DrawMech(mech, w, h)
 			render.ModelMaterialOverride(wireframe)
 			render.SetColorModulation(HSVToColor(hue, sat, val):ToVector():Unpack())
 
-			mech:DrawModelPart(part, STUDIO_RENDER)
+			part:Draw(STUDIO_RENDER, RENDERGROUP_OPAQUE)
 		end
 	end
 
