@@ -137,7 +137,6 @@ function ENT:Initialize()
 
 	if CLIENT then
 		self:InitParts()
-		self:SetRenderBounds(self.Bounds.Mins, self.Bounds.Maxs)
 
 		hook.Add("PreDrawHUD", self, self.PreDrawHUD)
 	else

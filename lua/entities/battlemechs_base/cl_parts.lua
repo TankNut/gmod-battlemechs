@@ -28,8 +28,9 @@ end
 function ENT:CreatePartEntity(part)
 	local ent = ClientsideModel(part.Model, part.RenderGroup)
 
-	-- Probably some bad behavior here combined with the retry in DrawModelPart
 	if not IsValid(ent) or ent:GetModel() == "models/error.mdl" then
+		part.Bad = true
+
 		return
 	end
 
@@ -66,30 +67,63 @@ function ENT:DrawModelPart(part, flags)
 		end
 	end
 
-	self:UpdatePart(part)
-
-	local bone = part.Bone
-	local pos, ang = LocalToWorld(part.Pos, part.Ang, bone.Pos, bone.Ang)
-
-	-- NaN check
-	if pos.x != pos.x then
-		return
-	end
-
-	ent:SetPos(pos)
-	ent:SetAngles(ang)
-
 	ent:DrawModel(flags)
 end
 
 function ENT:DrawPart(part, flags)
 	if part.Type == battlemechs.MODEL then
+		if part.Bad then
+			return
+		end
+
 		self:DrawModelPart(part, flags)
 	end
 end
 
 function ENT:ClearParts()
-	for _, part in pairs(self.Parts) do
+	for _, part in ipairs(self.Parts) do
 		SafeRemoveEntity(part.Entity)
 	end
+end
+
+function ENT:UpdateParts()
+	local renderMins, renderMaxs = self:GetCollisionBounds()
+
+	renderMins = self:LocalToWorld(renderMins)
+	renderMaxs = self:LocalToWorld(renderMaxs)
+
+	for _, part in ipairs(self.Parts) do
+		local ent = part.Entity
+
+		self:UpdatePart(part)
+
+		if not IsValid(ent) then
+			continue
+		end
+
+		local bone = part.Bone
+		local pos, ang = LocalToWorld(part.Pos, part.Ang, bone.Pos, bone.Ang)
+
+		if pos.x != pos.x then
+			continue
+		end
+
+		ent:SetPos(pos)
+		ent:SetAngles(ang)
+		ent:SetupBones()
+
+		local mins, maxs = ent:GetRotatedAABB(ent:OBBMins(), ent:OBBMaxs())
+		mins:Add(ent:GetPos())
+		maxs:Add(ent:GetPos())
+
+		renderMins.x = math.min(renderMins.x, mins.x, maxs.x)
+		renderMins.y = math.min(renderMins.y, mins.y, maxs.y)
+		renderMins.z = math.min(renderMins.z, mins.z, maxs.z)
+
+		renderMaxs.x = math.max(renderMaxs.x, mins.x, maxs.x)
+		renderMaxs.y = math.max(renderMaxs.y, mins.y, maxs.y)
+		renderMaxs.z = math.max(renderMaxs.z, mins.z, maxs.z)
+	end
+
+	self:SetRenderBoundsWS(renderMins, renderMaxs)
 end

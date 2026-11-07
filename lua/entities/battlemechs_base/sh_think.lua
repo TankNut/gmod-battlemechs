@@ -6,6 +6,7 @@ if CLIENT then
 
 		self:UpdateLegs()
 		self:UpdateBones()
+		self:UpdateParts()
 
 		self:TickModules()
 
