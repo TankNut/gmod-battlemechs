@@ -1,7 +1,7 @@
 module("battlemechs", package.seeall)
 
-local BaseClass = Meta.BasePart
 local PART = CreateMetaTable("ModelPart", "BasePart")
+local BaseClass = Meta.BasePart
 
 PART.IsModelPart = true
 
