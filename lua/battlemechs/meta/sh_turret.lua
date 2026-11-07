@@ -1,9 +1,8 @@
-AddCSLuaFile()
+module("battlemechs", package.seeall)
 
-local TURRET = battlemechs.Turret or {}
+local TURRET = CreateMetaTable("Turret")
 
 function TURRET:Initialize(bone, var, noDebug)
-	self.Mech = bone.Mech
 	self.Bone = bone
 
 	bone:AddCallback(function()
@@ -162,10 +161,3 @@ if SERVER then
 		self:SetNetworkVar(ang)
 	end
 end
-
-battlemechs.Turret = setmetatable(TURRET, {__call = function(self, ...)
-	local instance = setmetatable({}, {__index = self})
-	instance:Initialize(...)
-
-	return instance
-end})

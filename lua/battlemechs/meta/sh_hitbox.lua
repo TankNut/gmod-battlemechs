@@ -1,6 +1,6 @@
-AddCSLuaFile()
+module("battlemechs", package.seeall)
 
-local HITBOX = battlemechs.Hitbox or {}
+local HITBOX = CreateMetaTable("Hitbox")
 
 function HITBOX:Initialize(bone, group, pos, ang, size)
 	self.Bone = bone
@@ -36,12 +36,3 @@ function HITBOX:TestCollision(start, delta, min, max)
 
 	return self.PhysCollide:TraceBox(pos, ang, start, start + delta, min, max)
 end
-
-battlemechs.Hitbox = setmetatable(HITBOX, {__call = function(self, mech, ...)
-	local instance = setmetatable({
-		Mech = mech
-	}, {__index = self})
-	instance:Initialize(...)
-
-	return instance
-end})

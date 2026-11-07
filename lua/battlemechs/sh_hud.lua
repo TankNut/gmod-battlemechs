@@ -1,5 +1,3 @@
-AddCSLuaFile()
-
 module("battlemechs", package.seeall)
 
 local function recursiveAddFile(path)

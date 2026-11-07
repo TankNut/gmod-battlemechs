@@ -2,6 +2,8 @@ AddCSLuaFile()
 
 module("battlemechs", package.seeall)
 
+Meta = Meta or {}
+
 Mechs = Mechs or {}
 Npcs = Npcs or {}
 
@@ -9,9 +11,28 @@ local function shared(path) AddCSLuaFile(path) include(path) end
 local function client(path) if CLIENT then include(path) else AddCSLuaFile(path) end end
 local function server(path) if SERVER then include(path) end end
 
+function CreateMetaTable(name, base)
+	local meta = FindMetaTable("Battlemechs_" .. name)
 
+	if not meta then
+		meta = {}
 
+		Meta[name] = meta
+		RegisterMetaTable("Battlemechs_" .. name, meta)
+	end
 
+	if base then
+		meta.__index = battlemechs.Meta[base]
+	end
+
+	battlemechs[name] = function(mech, ...)
+		local instance = setmetatable({Mech = mech}, {__index = meta})
+		instance:Initialize(...)
+
+		return instance
+	end
+
+	return meta
 end
 
 shared("sh_convars.lua")

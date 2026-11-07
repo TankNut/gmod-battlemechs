@@ -1,20 +1,19 @@
-AddCSLuaFile()
+module("battlemechs", package.seeall)
 
-local BONE = battlemechs.Bone or {}
+local BONE = CreateMetaTable("Bone")
 
-function BONE:Initialize(mech, name, parent)
-	self.Mech = mech
+function BONE:Initialize(name, parent)
 	self.Name = name
 	self.Parent = parent
 
-	self.Index = table.insert(mech.Bones, self)
+	self.Index = table.insert(self.Mech.Bones, self)
 
 	self.Pos = Vector()
 	self.Ang = Angle()
 
 	self.Callbacks = {}
 
-	mech.BoneMap[self.Name] = self
+	self.Mech.BoneMap[self.Name] = self
 end
 
 function BONE:AddBone(name)
@@ -26,7 +25,7 @@ function BONE:AddCallback(callback)
 end
 
 function BONE:MakeTurret(var, callback, noDebug)
-	self.Turret = battlemechs.Turret(self, var, noDebug)
+	self.Turret = battlemechs.Turret(self.Mech, self, var, noDebug)
 
 	callback(self.Turret)
 end
@@ -58,10 +57,3 @@ function BONE:Update()
 		callback(self.Mech, self)
 	end
 end
-
-battlemechs.Bone = setmetatable(BONE, {__call = function(self, ...)
-	local instance = setmetatable({}, {__index = self})
-	instance:Initialize(...)
-
-	return instance
-end})

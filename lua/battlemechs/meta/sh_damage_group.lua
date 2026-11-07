@@ -1,19 +1,18 @@
-AddCSLuaFile()
+module("battlemechs", package.seeall)
 
-local GROUP = battlemechs.DamageGroup or {}
+local GROUP = CreateMetaTable("DamageGroup")
 
-function GROUP:Initialize(mech, name, health, bones)
-	self.Mech = mech
+function GROUP:Initialize(name, health, bones)
 	self.Name = name
 	self.MaxHealth = health
 	self.Bones = bones
 
-	self.Index = table.insert(mech.DamageGroups, self)
+	self.Index = table.insert(self.Mech.DamageGroups, self)
 
-	mech.DamagePool = mech.DamagePool + health
-	mech:NetworkVar("Int", "DamageGroup" .. self.Index)
+	self.Mech.DamagePool = self.Mech.DamagePool + health
+	self.Mech:NetworkVar("Int", "DamageGroup" .. self.Index)
 
-	mech.DamageMap[name] = self
+	self.Mech.DamageMap[name] = self
 end
 
 function GROUP:Get()
@@ -31,10 +30,3 @@ end
 function GROUP:IsBroken()
 	return self:Get() <= 0
 end
-
-battlemechs.DamageGroup = setmetatable(GROUP, {__call = function(self, ...)
-	local instance = setmetatable({}, {__index = self})
-	instance:Initialize(...)
-
-	return instance
-end})

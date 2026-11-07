@@ -1,5 +1,3 @@
-AddCSLuaFile()
-
 module("battlemechs", package.seeall)
 
 function Hook(name)
