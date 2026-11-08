@@ -7,9 +7,7 @@ function ENT:InitLegs()
 	self:BuildLegs() -- Interface
 end
 
-function ENT:UpdateLegs()
-	self:UpdateGait()
-
+function ENT:UpdateIK()
 	for _, leg in ipairs(self.Legs) do
 		leg.Solver(self, leg)
 	end
@@ -25,7 +23,6 @@ end
 function ENT:UpdateGait()
 	local delta = FrameTime()
 	local vel = self:GetMechVelocity()
-
 
 	local ply = self:GetDriver()
 

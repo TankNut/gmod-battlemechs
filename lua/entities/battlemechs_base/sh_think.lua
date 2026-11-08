@@ -4,8 +4,10 @@ if CLIENT then
 	function ENT:Think()
 		self:UpdateThirdPersonState()
 
-		self:UpdateLegs()
+		self:UpdateGait()
 		self:UpdateBones()
+		self:UpdateIK()
+
 		self:UpdateParts()
 
 		self:TickModules()
@@ -23,8 +25,9 @@ else
 	function ENT:PhysicsUpdate(phys)
 		self:HandleMovement(phys)
 
-		self:UpdateLegs()
+		self:UpdateGait()
 		self:UpdateBones()
+		self:UpdateIK()
 
 		self:TickModules()
 	end
