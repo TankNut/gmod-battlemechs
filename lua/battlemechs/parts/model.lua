@@ -4,19 +4,17 @@ local PART = CreateMetaTable("ModelPart", "BasePart")
 local BaseClass = Meta.BasePart
 
 function PART:Initialize(data)
-	self.Entity = NULL
-	self.Model = "models/error.mdl"
-	self.Skin = 0
+	-- Bypassing callbacks since there isn't an entity yet
+	local tab = self:GetTable()
+	tab.Entity = NULL
 
-	self.Material = ""
+	tab.Model = "models/error.mdl"
+	tab.Skin = 0
+
+	tab.Material = ""
 
 	BaseClass.Initialize(self, data)
 
-	self:CreateEntity()
-end
-
-function PART:SetModel(mdl)
-	self.Model = mdl
 	self:CreateEntity()
 end
 
@@ -32,6 +30,7 @@ function PART:CreateEntity()
 		SafeRemoveEntity(self.Entity)
 	else
 		self.Entity:SetNoDraw(true)
+		self:ApplyModifiers()
 	end
 
 	return not self._Broken
@@ -57,11 +56,27 @@ function PART:Destroy()
 	end
 end
 
-function PART:UpdateMaterials()
-	-- GetMaterials doesn't update on clientside models, track this differently
-	if self.Entity:GetMaterial() != self.Material then
-		self.Entity:SetMaterial(self.Material)
-	end
+function PART:ApplyModifiers()
+	local ent = self.Entity
+
+	if self.Skin != 0 then ent:SetSkin(self.Skin) end
+	if self.Material != "" then ent:SetMaterial(self.Material) end
+end
+
+function PART:OnModelChanged(mdl)
+	self:CreateEntity()
+end
+
+function PART:OnSkinChanged(index)
+	if self._Broken then return end
+
+	self.Entity:SetSkin(index)
+end
+
+function PART:OnMaterialChanged(mat)
+	if self._Broken then return end
+
+	self.Entity:SetMaterial(mat)
 end
 
 function PART:Update()
@@ -73,8 +88,6 @@ function PART:Update()
 	ent:SetPos(pos)
 	ent:SetAngles(ang)
 	ent:SetupBones()
-
-	self:UpdateMaterials()
 end
 
 function PART:GetRenderBounds()
@@ -105,4 +118,8 @@ function PART:Draw(flags, rendergroup)
 	end
 
 	self.Entity:DrawModel(flags)
+end
+
+function PART:__tostring()
+	return string.format("%s [%s][\"%s\"]", self.MetaName, self.Mech:EntIndex(), self.Model)
 end

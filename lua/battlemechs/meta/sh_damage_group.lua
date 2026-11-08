@@ -30,3 +30,7 @@ end
 function GROUP:IsBroken()
 	return self:Get() <= 0
 end
+
+function GROUP:__tostring()
+	return string.format("%s [%s][%s]", self.MetaName, self.Mech:EntIndex(), self.Name)
+end

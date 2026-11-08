@@ -3,12 +3,11 @@ module("battlemechs", package.seeall)
 local PART = CreateMetaTable("BasePart")
 
 function PART:Initialize(data)
-	self.Hidden = false
+	local tab = self:GetTable()
+	tab.Hidden = false
 
-	self.Pos = Vector()
-	self.Ang = Angle()
-
-	self.NoHud = false -- Hide in hud views
+	tab.Pos = Vector()
+	tab.Ang = Angle()
 
 	for k, v in pairs(data) do
 		self[k] = v

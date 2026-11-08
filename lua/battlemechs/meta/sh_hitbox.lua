@@ -36,3 +36,7 @@ function HITBOX:TestCollision(start, delta, min, max)
 
 	return self.PhysCollide:TraceBox(pos, ang, start, start + delta, min, max)
 end
+
+function HITBOX:__tostring()
+	return string.format("%s [%s][%s]", self.MetaName, self.Mech:EntIndex(), self.Bone)
+end
