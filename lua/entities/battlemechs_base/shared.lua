@@ -56,12 +56,6 @@ ENT.ThirdPersonSettings = {
 
 -- Misc fields
 ENT.BaseHealth = 6000
-
-ENT.Bounds = {
-	Mins = Vector(-120, -120, -135),
-	Maxs = Vector(120, 120, 120)
-}
-
 ENT.Radius = 600
 
 ENT.FootstepSound = "MW4.Footstep.Small"
@@ -186,7 +180,6 @@ function ENT:InitPhysics()
 	self:EnableCustomCollisions(true)
 
 	self:SetCollisionBounds(self.Mins - Vector(0, 0, hull.Step), self.Maxs)
-	self:SetSurroundingBounds(self.Bounds.Mins, self.Bounds.Maxs)
 
 	self.PhysCollide = CreatePhysCollideBox(self.Mins, self.Maxs)
 
@@ -243,7 +236,7 @@ if SERVER then
 
 			local tr = util.TraceHull({
 				start = self:GetPos(),
-				endpos = self:GetPos() + Vector(0, 0, self.Bounds.Mins.z),
+				endpos = self:GetPos() + Vector(0, 0, self.Mins.z - self.Hull.Step),
 				filter = {self, ply},
 				mask = MASK_PLAYERSOLID,
 				mins = mins,

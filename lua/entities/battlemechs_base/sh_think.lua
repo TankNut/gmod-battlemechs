@@ -7,6 +7,7 @@ if CLIENT then
 		self:UpdateGait()
 		self:UpdateBones()
 		self:UpdateIK()
+		self:UpdateBounds()
 
 		self:UpdateParts()
 
@@ -28,6 +29,7 @@ else
 		self:UpdateGait()
 		self:UpdateBones()
 		self:UpdateIK()
+		self:UpdateBounds()
 
 		self:TickModules()
 	end

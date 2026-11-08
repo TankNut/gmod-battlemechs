@@ -29,28 +29,29 @@ function ENT:ClearParts()
 end
 
 function ENT:UpdateParts()
-	local renderMins, renderMaxs = self:GetCollisionBounds()
+	local minBounds, maxBounds = self:GetCollisionBounds()
+	local pos = self:GetPos()
 
-	renderMins = self:LocalToWorld(renderMins)
-	renderMaxs = self:LocalToWorld(renderMaxs)
+	minBounds:Add(pos)
+	maxBounds:Add(pos)
 
 	for _, part in ipairs(self.Parts) do
 		if part:ShouldDraw() then
 			local mins, maxs = part:GetRenderBounds()
 
 			if mins and maxs then
-				renderMins.x = math.min(renderMins.x, mins.x, maxs.x)
-				renderMins.y = math.min(renderMins.y, mins.y, maxs.y)
-				renderMins.z = math.min(renderMins.z, mins.z, maxs.z)
+				minBounds.x = math.min(minBounds.x, mins.x, maxs.x)
+				minBounds.y = math.min(minBounds.y, mins.y, maxs.y)
+				minBounds.z = math.min(minBounds.z, mins.z, maxs.z)
 
-				renderMaxs.x = math.max(renderMaxs.x, mins.x, maxs.x)
-				renderMaxs.y = math.max(renderMaxs.y, mins.y, maxs.y)
-				renderMaxs.z = math.max(renderMaxs.z, mins.z, maxs.z)
+				maxBounds.x = math.max(maxBounds.x, mins.x, maxs.x)
+				maxBounds.y = math.max(maxBounds.y, mins.y, maxs.y)
+				maxBounds.z = math.max(maxBounds.z, mins.z, maxs.z)
 			end
 		end
 
 		part:Update()
 	end
 
-	self:SetRenderBoundsWS(renderMins, renderMaxs)
+	self:SetRenderBoundsWS(minBounds, maxBounds)
 end

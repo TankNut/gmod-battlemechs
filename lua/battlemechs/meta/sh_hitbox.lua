@@ -31,6 +31,35 @@ function HITBOX:GetTransform()
 	return LocalToWorld(self.Pos, self.Ang, bone.Pos, bone.Ang)
 end
 
+local matrix = Matrix()
+
+-- Returns the hitbox's AABB in world space
+function HITBOX:GetAABB()
+	local pos, ang = self:GetTransform()
+
+	matrix:Identity()
+	matrix:SetAngles(ang)
+
+	local mins, maxs = Vector(pos), Vector(pos)
+
+	for i = 1, 3 do
+		for j = 1, 3 do
+			local a = matrix:GetField(i, j) * self.Mins[j]
+			local b = matrix:GetField(i, j) * self.Maxs[j]
+
+			if a < b then
+				mins[i] = mins[i] + a
+				maxs[i] = maxs[i] + b
+			else
+				mins[i] = mins[i] + b
+				maxs[i] = maxs[i] + a
+			end
+		end
+	end
+
+	return mins, maxs
+end
+
 function HITBOX:TestCollision(start, delta, min, max)
 	local pos, ang = self:GetTransform()
 

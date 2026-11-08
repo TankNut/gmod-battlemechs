@@ -15,14 +15,14 @@ local up =      Color(0, 0, 255)
 local arrow = Material("widgets/arrow.png", "nocull smooth mips")
 local cvar_ignorez = CreateClientConVar("battlemechs_debug_ignorez", 0, true)
 
-local function drawBox(pos, ang, mins, maxs, color)
+local function drawBox(pos, ang, mins, maxs, color, alpha)
 	local oldAlpha = color.a
 	local ignorez = cvar_ignorez:GetBool()
 
 	color.a = 255
 	render.DrawWireframeBox(pos, ang, mins, maxs, color, not ignorez)
 
-	color.a = 10
+	color.a = alpha or 20
 	render.SetColorMaterial()
 	cam.IgnoreZ(ignorez)
 	render.DrawBox(pos, ang, mins, maxs, color)
@@ -102,6 +102,10 @@ function ENT:DebugHitboxes()
 
 		drawBox(pos, ang, hitbox.Mins, hitbox.Maxs, col)
 	end
+
+	local mins, maxs = self:GetSurroundingBounds()
+
+	drawBox(vector_origin, angle_zero, mins, maxs, color_white, 0)
 end
 
 function ENT:DebugGait()
