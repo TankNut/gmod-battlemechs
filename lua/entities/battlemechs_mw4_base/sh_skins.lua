@@ -111,7 +111,7 @@ if CLIENT then
 
 	function ENT:UpdateParts()
 		for _, part in ipairs(self.Parts) do
-			if not part:IsBasedOn("ModelPart") or not part:ShouldDraw() or part.NoSkin then
+			if not part:IsTypeOf(battlemechs.TYPE_MODELPART) or not part:ShouldDraw() or part.NoSkin then
 				continue
 			end
 

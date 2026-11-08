@@ -26,7 +26,7 @@ function PANEL:DrawMech(mech, w, h)
 	render.CullMode(MATERIAL_CULLMODE_NONE)
 
 	for _, part in ipairs(mech.Parts) do
-		if not part:IsBasedOn("ModelPart") or not part:ShouldDraw() or part.NoHud then
+		if not part:IsTypeOf(battlemechs.TYPE_MODELPART) or not part:ShouldDraw() then
 			continue
 		end
 

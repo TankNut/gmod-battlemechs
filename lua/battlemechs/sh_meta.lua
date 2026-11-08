@@ -1,52 +1,95 @@
 module("battlemechs", package.seeall)
 
-Meta = Meta or {}
+Meta = Meta or {Base = {}}
+Data = Data or setmetatable({}, {__mode = "k"})
 
-local META = {}
+-- True base class, only exists as a table
+local META = Meta.Base
 
-function META:IsType(name)
-	return self.TypeName == name
-end
-
-function META:IsBasedOn(name)
-	-- Get class table
-	local meta = getmetatable(self).__meta
+function META:IsTypeOf(typeid)
+	local meta = getmetatable(self)
 
 	while meta do
-		if meta.TypeName == name then
+		if rawget(meta, "MetaID") == typeid then
 			return true
 		end
 
-		meta = meta._Base
+		meta = rawget(meta, "MetaBaseClass")
 	end
 
 	return false
 end
 
+local function find(meta, key)
+	while meta do
+		local val = rawget(meta, key)
+
+		if val != nil then
+			return val
+		end
+
+		meta = rawget(meta, "MetaBaseClass")
+	end
+end
+
 function CreateMetaTable(name, base)
-	local meta = FindMetaTable("Battlemechs_" .. name)
+	local metaName = "Battlemechs." .. name
+	local meta = FindMetaTable(metaName)
 
-	if not meta then
-		meta = {}
-
-		Meta[name] = meta
-		RegisterMetaTable("Battlemechs_" .. name, meta)
+	if meta then
+		return meta
 	end
 
-	meta.TypeName = name
-	meta._Base = battlemechs.Meta[base]
+	local proxy = newproxy(true)
+	meta = getmetatable(proxy)
 
-	setmetatable(meta, {
-		__index = base and battlemechs.Meta[base] or META,
-		__meta = meta
-	})
+	RegisterMetaTable(metaName, meta)
+	Meta[name] = meta
+
+	meta.MetaBaseClass = base and Meta[base] or Meta.Base
+
+	function meta:GetTable()
+		return Data[self]
+	end
+
+	function meta:__index(key)
+		-- Check GetTable first
+		local val = Data[self][key]
+
+		if val != nil then
+			return val
+		end
+
+		-- Try to find what we're looking for in our various metatables
+		return find(meta, key)
+	end
+
+	function meta:__newindex(key, val)
+		Data[self][key] = val
+
+		local callback = find(meta, "On" .. key .. "Changed")
+
+		if callback then
+			callback(self, val)
+		end
+	end
+
+	function meta:__tostring()
+		return meta.MetaName
+	end
 
 	battlemechs[name] = function(mech, ...)
-		local instance = setmetatable({Mech = mech}, {__index = meta, __meta = meta})
+		local instance = newproxy(proxy)
+		Data[instance] = {
+			Mech = mech
+		}
+
 		instance:Initialize(...)
 
 		return instance
 	end
+
+	battlemechs["TYPE_" .. string.upper(name)] = meta.MetaID
 
 	return meta
 end
