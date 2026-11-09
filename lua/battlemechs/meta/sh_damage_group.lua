@@ -2,10 +2,9 @@ module("battlemechs", package.seeall)
 
 local GROUP = CreateMetaTable("DamageGroup")
 
-function GROUP:Initialize(name, health, bones)
+function GROUP:Initialize(name, health)
 	self.Name = name
 	self.MaxHealth = health
-	self.Bones = bones
 
 	self.Index = table.insert(self.Mech.DamageGroups, self)
 
