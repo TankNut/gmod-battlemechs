@@ -55,8 +55,8 @@ ENT.ThirdPersonSettings = {
 }
 
 -- Misc fields
-ENT.BaseHealth = 6000
-ENT.Radius = 600
+ENT.BaseHealth = 6000 -- The mech's health
+ENT.DrawDistance = 600 -- Used for UI's to determine the distance at which to draw the mech
 
 ENT.FootstepSound = "MW4.Footstep.Small"
 
