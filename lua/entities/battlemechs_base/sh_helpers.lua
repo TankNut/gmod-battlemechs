@@ -9,7 +9,11 @@ function ENT:WorldToMech(pos, ang)
 end
 
 function ENT:GetMechCenter()
-	return self:GetPos() + Vector(0, 0, (self.Hull.Height - self.Hull.Offset) / 2)
+	local center = self.Hull.Mins - Vector(0, 0, self.GroundOffset)
+	center:Add(self.Hull.Maxs)
+	center:Mul(0.5)
+
+	return self:GetPos() + center
 end
 
 function ENT:GetMoveStat(val)
@@ -25,7 +29,7 @@ function ENT:GetMoveStat(val)
 end
 
 function ENT:GetGroundOffset()
-	return self.Hull.Offset
+	return self.GroundOffset
 end
 
 function ENT:MechEmitSound(snd, arg)

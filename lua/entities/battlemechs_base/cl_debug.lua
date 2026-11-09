@@ -41,13 +41,13 @@ local function drawArrow(pos, ang, length, color)
 end
 
 function ENT:DebugPhysics()
-	local mins, maxs = Vector(self.Mins), Vector(self.Maxs)
+	local mins, maxs = Vector(self.Hull.Mins), Vector(self.Hull.Maxs)
 	local pos = self:GetPos()
 
 	drawBox(pos, angle_zero, mins, maxs, physicsColor)
 
 	maxs.z = mins.z
-	mins.z = mins.z - self.Hull.Step
+	mins.z = mins.z - self.GroundOffset
 
 	drawBox(pos, angle_zero, mins, maxs, stepColor)
 	drawArrow(pos, self:GetMechAngles(), 100, physicsColor)

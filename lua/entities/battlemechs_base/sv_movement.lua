@@ -1,20 +1,21 @@
 function ENT:GetStepDown()
-	return self.Hull.Step * 2
+	return self.GroundOffset * 2
 end
 
 function ENT:GetGroundTrace(mv)
 	local pos = self:GetPos()
+	local hull = self.Hull
 
 	local tr = util.TraceHull({
 		start = pos,
 		endpos = pos - Vector(0, 0, 56756),
 		filter = {self, "player", "npc*"},
 		collisiongroup = COLLISION_GROUP_PLAYER_MOVEMENT,
-		mins = self.Mins,
-		maxs = self.Maxs
+		mins = hull.Mins,
+		maxs = hull.Maxs
 	})
 
-	mv.GroundLevel = tr.HitPos.z + self.Mins.z
+	mv.GroundLevel = tr.HitPos.z + hull.Mins.z
 	mv.Normal = tr.HitNormal
 	mv.Slope = math.NormalizeAngle(tr.HitNormal:Angle().p + 90)
 
@@ -27,8 +28,6 @@ function ENT:CheckGround(mv)
 	end
 
 	local vel = mv.Velocity
-
-	local height = self.Hull.Offset
 	local dist = self:GetPos().z - mv.GroundLevel
 
 	if mv.Slope > self.MaxSlope then
@@ -42,7 +41,7 @@ function ENT:CheckGround(mv)
 		vel:Sub(dir)
 	end
 
-	local diff = height - dist
+	local diff = self.GroundOffset - dist
 
 	-- Snap to ground
 	vel.z = diff * 10

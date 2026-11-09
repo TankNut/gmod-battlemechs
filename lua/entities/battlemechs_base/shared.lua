@@ -18,12 +18,12 @@ ENT.DisableDuplicator = true
 -- Every other type of value is passed along without modification
 
 -- Movement related fields
-ENT.Hull = {
-	Size = 64, -- Length and Width
-	Height = 105, -- Height above the entity origin
-	Offset = 135, -- How high the origin sits above the ground
-	Step = 96 -- How far the bottom of the hull sits from the ground, enables stepping over objects
+ENT.Hull = { -- Physics hull, only used for movement
+	Mins = Vector(-64, -64, -5),
+	Maxs = Vector(64, 64, 105)
 }
+
+ENT.GroundOffset = 135 -- How far above the ground the mech's origin sits
 
 ENT.MoveAcceleration = 400 -- Hammer units/s of acceleration when moving or slowing down
 ENT.MaxSlope = 40 -- The steepest slope a mech can walk on, any steeper and it'll start sliding down
@@ -102,9 +102,10 @@ if SERVER then
 			return
 		end
 
-		local offset = self.Hull.Offset
+		local pos = tr.HitPos
+		pos.z = pos.z + ent.GroundOffset - ent.Hull.Mins.z
 
-		ent:SetPos(tr.HitPos + Vector(0, 0, offset))
+		ent:SetPos(pos)
 		ent:SetAngles(angle_zero)
 
 		local yaw = math.NormalizeAngle(tr.Normal:Angle().y + 180)
@@ -172,19 +173,13 @@ function ENT:InitPhysics()
 		frozen = not phys:IsMotionEnabled()
 	end
 
-	local hull = self.Hull
-
-	self.Mins = Vector(-hull.Size, -hull.Size, -hull.Offset + hull.Step)
-	self.Maxs = Vector(hull.Size, hull.Size, hull.Height)
-
 	self:EnableCustomCollisions(true)
+	self:SetCollisionBounds(self.Hull.Mins - Vector(0, 0, self.GroundOffset), self.Hull.Maxs)
 
-	self:SetCollisionBounds(self.Mins - Vector(0, 0, hull.Step), self.Maxs)
-
-	self.PhysCollide = CreatePhysCollideBox(self.Mins, self.Maxs)
+	self.PhysCollide = CreatePhysCollideBox(self.Hull.Mins, self.Hull.Maxs)
 
 	if SERVER then
-		self:PhysicsInitBox(self.Mins, self.Maxs, "solidmetal")
+		self:PhysicsInitBox(self.Hull.Mins, self.Hull.Maxs, "solidmetal")
 		self:SetSolid(SOLID_VPHYSICS)
 
 		phys = self:GetPhysicsObject()
@@ -236,7 +231,7 @@ if SERVER then
 
 			local tr = util.TraceHull({
 				start = self:GetPos(),
-				endpos = self:GetPos() + Vector(0, 0, self.Mins.z - self.Hull.Step),
+				endpos = self:GetPos() - Vector(0, 0, self.GroundOffset - self.Hull.Mins.z),
 				filter = {self, ply},
 				mask = MASK_PLAYERSOLID,
 				mins = mins,
