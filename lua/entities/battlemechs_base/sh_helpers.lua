@@ -35,26 +35,3 @@ end
 function ENT:GetGroundOffset()
 	return self.GroundOffset
 end
-
-function ENT:MechEmitSound(snd, arg)
-	if snd == nil then return end
-
-	-- Looping sound
-	if arg == true then
-		self.SoundCache[snd] = self:StartLoopingSound(snd)
-	elseif isvector(arg) then
-		EmitSound(snd, arg, self:EntIndex())
-	else
-		self:EmitSound(snd)
-	end
-end
-
-function ENT:MechStopSound(snd, arg)
-	if snd == nil then return end
-
-	if arg == true then
-		self:StopLoopingSound(self.SoundCache[snd] or -1)
-	else
-		self:StopSound(snd)
-	end
-end
