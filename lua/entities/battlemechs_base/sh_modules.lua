@@ -5,9 +5,10 @@ function ENT:InitModules()
 	self:BuildModules()
 end
 
-function ENT:AddModule(class, config)
+function ENT:AddModule(class, config, group)
 	local id = table.insert(self.Modules, {
-		Config = config or {}
+		Config = config or {},
+		DamageGroup = group
 	})
 
 	if SERVER then
@@ -16,7 +17,6 @@ function ENT:AddModule(class, config)
 		ent:SetPos(self:WorldSpaceCenter())
 		ent:SetAngles(self:GetAngles())
 		ent:SetParent(self)
-
 		ent:SetOwner(self)
 
 		ent:SetTransmitWithParent(true)
