@@ -60,7 +60,8 @@ function ENT:ApplyRotation(mv)
 	local direction = right - left
 
 	if direction != 0 then
-		local delta = Angle(0, -(direction * self.TurnRate * mv.Delta), 0)
+		local rate = self:GetTurnRate()
+		local delta = Angle(0, -(direction * rate * mv.Delta), 0)
 		local ang = self:GetMechAngles()
 		ang:Add(delta)
 
@@ -163,9 +164,9 @@ function ENT:HandleMovement(phys)
 	self:GetGroundTrace(mv)
 	self:CheckGround(mv)
 
-	if mv.OnGround then
-		self:ApplyRotation(mv)
+	self:ApplyRotation(mv)
 
+	if mv.OnGround then
 		self:ApplyFriction(mv)
 		self:Accelerate(mv)
 	end

@@ -23,7 +23,8 @@ ENT.MaxSlope = 40 -- The steepest slope a mech can walk on, any steeper and it'l
 ENT.WalkSpeed = 200 -- The target speed when walking normally
 ENT.RunSpeed = 600 -- The target speed when +speed is held down
 
-ENT.TurnRate = 126 -- [MoveStat] Degrees/s the mech can turn
+ENT.TurnRate = {126, 90} -- [MoveStat] Degrees/s the mech can turn
+ENT.AirTurnRate = 25 -- [MoveStat] Degrees/s the mech can turn when off the ground
 
 -- Gait/leg related fields
 ENT.StepSize = 300 -- [MoveStat] The forward length of each step the mech takes

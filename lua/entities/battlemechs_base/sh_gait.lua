@@ -34,7 +34,7 @@ function ENT:UpdateGait()
 			offset = math.max(offset, leg.Offset:Length())
 		end
 
-		vel:Add(vel:GetNormalized() * offset * self.TurnRate * delta)
+		vel:Add(vel:GetNormalized() * offset * self:GetTurnRate() * delta)
 	end
 
 	local length = self:GetMoveStat(self.Stance)

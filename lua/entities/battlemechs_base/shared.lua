@@ -32,6 +32,7 @@ ENT.WalkSpeed = 200 -- The target speed when walking normally
 ENT.RunSpeed = 600 -- The target speed when +speed is held down
 
 ENT.TurnRate = 90 -- [MoveStat] Degrees/s the mech can turn
+ENT.AirTurnRate = 25 -- [MoveStat] Degrees/s the mech can turn when off the ground
 
 -- Gait/leg related fields
 ENT.StepSize = {160, 220} -- [MoveStat] The horizontal side of each step the mech takes

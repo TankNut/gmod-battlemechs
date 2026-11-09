@@ -28,6 +28,10 @@ function ENT:GetMoveStat(val)
 	return val
 end
 
+function ENT:GetTurnRate()
+	return self:GetMoveStat(self:GetOnGround() and self.TurnRate or self.AirTurnRate)
+end
+
 function ENT:GetGroundOffset()
 	return self.GroundOffset
 end
