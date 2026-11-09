@@ -12,7 +12,7 @@ ENT.Spawnable = true
 -- Movement related fields
 ENT.Hull = { -- Physics hull, only used for movement
 	Mins = Vector(-48, -48, -16),
-	Maxs = Vector(48, 48, 55)
+	Maxs = Vector(48, 48, 65)
 }
 
 ENT.GroundOffset = 110 -- How far above the ground the mech's origin sits
@@ -33,14 +33,26 @@ ENT.ForwardLean = {1.1, 1.4} -- [MoveStat] How far off-center the mech's legs ar
 ENT.SideStep = 10 -- [MoveStat] The amount of side offset that's applied to the gait offset value
 ENT.UpStep = {2, 1} -- [MoveStat] The amount of upwards offset that's applied to the gait offset value
 
--- Misc fields
-ENT.BaseHealth = 2000
+-- Camera
+ENT.FirstPersonSettings = {
+	Bone = nil,
+	Pos = Vector(),
 
-ENT.DrawRadius = 200 -- The radius that's added on top of ENT.Hull to determine the mech's render bounds
+	HideParts = true
+}
+
+ENT.ThirdPersonSettings = {
+	Distance = 400,
+	Pos = Vector(0, 0, 100)
+}
+
+-- Misc fields
+ENT.BaseHealth = 2000 -- The mech's health
+ENT.DrawDistance = 450 -- The radius that's added on top of ENT.Hull to determine the mech's render bounds
+
 ENT.FootstepSound = "MW4.Footstep.Small"
 
 -- Custom fields
-
 ENT.UpperLength = 38
 ENT.LowerLength = 85
 
